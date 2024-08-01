@@ -2,9 +2,9 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy import DECIMAL, ForeignKey, String, Integer
 
-db = SQLAlchemy()
+from db import db
 
-class Cart(db.Model):
+class CartModel(db.Model):
     __tablename__ = 'carts'
 
     id = mapped_column(Integer, primary_key=True)

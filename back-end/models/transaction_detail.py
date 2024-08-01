@@ -2,9 +2,9 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy import DECIMAL, ForeignKey, Integer
 
-db = SQLAlchemy()
+from db import db
 
-class TransactionDetails(db.Model):
+class TransactionDetailModel(db.Model):
     __tablename__ = 'transaction_details'
 
     id = mapped_column(Integer, primary_key=True)

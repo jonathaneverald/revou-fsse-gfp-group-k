@@ -22,6 +22,8 @@ class ProductModel(db.Model):
     description = mapped_column(String(255))
     type = mapped_column(String(255))
 
+    category = relationship('CategoryModel', back_populates='products')
+
     def to_dictionaries(self):
         return {
             "id": self.id,
