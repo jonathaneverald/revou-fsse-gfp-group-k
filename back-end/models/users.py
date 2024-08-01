@@ -26,6 +26,7 @@ class UserModel(db.Model, UserMixin):
     )
     sellers = db.relationship("SellerModel", uselist=False, backref="user", lazy=True)
     products = db.relationship("ProductModel", backref="user", lazy=True)
+    carts = relationship("CartModel", back_populates="user")
 
     def to_dictionaries(self):
         return {
@@ -35,6 +36,8 @@ class UserModel(db.Model, UserMixin):
             "role": self.role,
             "address": self.address,
             "phone_number": self.phone_number,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
         }
 
     def set_password(self, password):

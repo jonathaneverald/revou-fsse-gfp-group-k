@@ -15,7 +15,7 @@ class LocationModel(db.Model):
     slug = mapped_column(String(255), unique=True)
     city = mapped_column(String(255), unique=True)
 
-    sellers = db.relationship("SellerModel", backref="user", lazy=True)
+    sellers = db.relationship("SellerModel", backref="seller", lazy=True)
 
     def to_dictionaries(self):
         return {"id": self.id, "slug": self.slug, "city": self.city}
