@@ -7,7 +7,7 @@ from db import db
 from models.users import UserModel
 from sqlalchemy.orm import sessionmaker
 from connector.mysql_connector import connection
-from controllers.auth_controller import auth_blueprint
+from controllers.auth_controller import auth_blueprint, revoked_tokens
 
 
 def create_app():
@@ -15,6 +15,11 @@ def create_app():
     app.config.from_object(Config)
     app.config["JWT_SECRET_KEY"] = "your_jwt_secret_key"
     jwt = JWTManager(app)
+
+    @jwt.token_in_blocklist_loader
+    def check_if_token_revoked(jwt_header, jwt_payload):
+        jti = jwt_payload["jti"]
+        return jti in revoked_tokens
 
     db.init_app(app)
     Migrate(app, db)

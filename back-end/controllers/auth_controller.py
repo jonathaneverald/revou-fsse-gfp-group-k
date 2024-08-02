@@ -2,14 +2,20 @@ from flask import Blueprint, request
 from connector.mysql_connector import connection
 from models.users import UserModel
 from sqlalchemy.orm import sessionmaker
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import (
+    create_access_token,
+    jwt_required,
+    get_jwt_identity,
+    get_jwt,
+)
 from flask_login import login_required, logout_user, login_user, current_user
 from cerberus import Validator
-from schemas.user_schema import login_schema, register_schema
+from schemas.user_schema import login_schema, register_schema, update_profile_schema
 from utils.handle_response import ResponseHandler
 import logging
 
 auth_blueprint = Blueprint("auth_blueprint", __name__)
+revoked_tokens = set()
 
 
 @auth_blueprint.post("/register")
@@ -38,7 +44,6 @@ def register():
 
         # Check if the email already exists
         existing_user = s.query(UserModel).filter((UserModel.email == email)).first()
-
         if existing_user:
             return ResponseHandler.error(message="User already exists", status=409)
 
@@ -109,9 +114,93 @@ def login():
         s.close()
 
 
+@auth_blueprint.get("/profile")
+@jwt_required()
+def profile():
+    user_id = get_jwt_identity()
+    Session = sessionmaker(connection)
+    s = Session()
+
+    try:
+        user = s.query(UserModel).filter(UserModel.id == user_id).first()
+        if user == None:
+            return ResponseHandler.error(message="User not found!", status=404)
+
+        return ResponseHandler.success(
+            data={
+                "id": user.id,
+                "email": user.email,
+                "role": user.role,
+                "address": user.address,
+                "phone_number": user.phone_number,
+            },
+            status=200,
+        )
+
+    except Exception as e:
+        s.rollback()
+        return ResponseHandler.error(message="Show Profile Failed!", status=500)
+
+    finally:
+        s.close()
+
+
+@auth_blueprint.put("/profile")
+@jwt_required()
+def update_profile():
+    user_id = get_jwt_identity()
+    Session = sessionmaker(connection)
+    s = Session()
+    s.begin()
+
+    try:
+        data = request.get_json()  # Get input data
+        validator = Validator(update_profile_schema)
+
+        # Check data is valid or invalid
+        if not validator.validate(data):
+            return ResponseHandler.error(
+                message="Data Invalid!", data=validator.errors, status=400
+            )
+
+        user = s.query(UserModel).filter(UserModel.id == user_id).first()
+
+        # Checking if the user is available on database
+        if user == None:
+            return ResponseHandler.error(message="User not found!", status=403)
+
+        email = data.get("email")
+        password = data.get("password")
+        name = data.get("name")
+        address = data.get("address")
+        phone_number = data.get("phone_number")
+
+        # Check if the email already exists
+        existing_user = s.query(UserModel).filter((UserModel.email == email)).first()
+        if existing_user:
+            return ResponseHandler.error(message="User already exists", status=409)
+
+        user.email = email
+        user.set_password(password)
+        user.name = name
+        user.address = address
+        user.phone_number = phone_number
+        s.commit()
+
+        return ResponseHandler.success(data=user.to_dictionaries(), status=201)
+
+    except Exception as e:
+        pass
+
+    finally:
+        s.close()
+
+
 @auth_blueprint.get("/logout")
-@login_required
+@jwt_required()
 def logout():
+    jti = get_jwt()["jti"]  # Get the unique identifier of the token
+    revoked_tokens.add(jti)  # Add the token's jti to the revoked tokens set
     user_info = {"id": current_user.id, "email": current_user.email}
     logout_user()
     return ResponseHandler.success(
@@ -119,25 +208,25 @@ def logout():
     )
 
 
-@auth_blueprint.get("/verify-token")
-@jwt_required
-def verify_token():
-    Session = sessionmaker(connection)
-    s = Session()
-    s.begin()
-    try:
-        current_user_id = get_jwt_identity()
-        user = s.query(UserModel).filter(UserModel.id == current_user_id).first()
-        if user:
-            return ResponseHandler.success(
-                data={"user_id": user.id, "email": user.email}, status=200
-            )
-        else:
-            return ResponseHandler.error(message="User not found", status=404)
+# @auth_blueprint.get("/verify-token")
+# @jwt_required
+# def verify_token():
+#     Session = sessionmaker(connection)
+#     s = Session()
+#     s.begin()
+#     try:
+#         current_user_id = get_jwt_identity()
+#         user = s.query(UserModel).filter(UserModel.id == current_user_id).first()
+#         if user:
+#             return ResponseHandler.success(
+#                 data={"user_id": user.id, "email": user.email}, status=200
+#             )
+#         else:
+#             return ResponseHandler.error(message="User not found", status=404)
 
-    except Exception as e:
-        s.rollback()
-        return ResponseHandler.error(message=f"Error: {str(e)}", status=500)
+#     except Exception as e:
+#         s.rollback()
+#         return ResponseHandler.error(message=f"Error: {str(e)}", status=500)
 
-    finally:
-        s.close()
+#     finally:
+#         s.close()
