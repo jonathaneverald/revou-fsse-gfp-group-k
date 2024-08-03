@@ -14,6 +14,7 @@ bcrypt = "*"
 cerberus = "*"
 flask-sqlalchemy = "*"
 flask-migrate = "*"
+python-slugify = "*"
 
 [dev-packages]
 

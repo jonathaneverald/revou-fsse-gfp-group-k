@@ -8,7 +8,7 @@ from flask_jwt_extended import (
     get_jwt_identity,
     get_jwt,
 )
-from flask_login import login_required, logout_user, login_user, current_user
+from flask_login import logout_user, login_user, current_user
 from cerberus import Validator
 from schemas.user_schema import login_schema, register_schema, update_profile_schema
 from utils.handle_response import ResponseHandler
@@ -65,7 +65,11 @@ def register():
     except Exception as e:
         s.rollback()
         logging.error("Exception occurred: %s", str(e))
-        return ResponseHandler.error(message="Register Failed!", status=500)
+        return ResponseHandler.error(
+            message="An error occurred while registering new account",
+            data=str(e),
+            status=500,
+        )
 
     finally:
         s.close()
@@ -108,7 +112,11 @@ def login():
 
     except Exception as e:
         s.rollback()
-        return ResponseHandler.error(message="Login Failed!", status=500)
+        return ResponseHandler.error(
+            message="Login failed!",
+            data=str(e),
+            status=500,
+        )
 
     finally:
         s.close()
@@ -139,7 +147,11 @@ def profile():
 
     except Exception as e:
         s.rollback()
-        return ResponseHandler.error(message="Show Profile Failed!", status=500)
+        return ResponseHandler.error(
+            message="Show Profile Failed!",
+            data=str(e),
+            status=500,
+        )
 
     finally:
         s.close()
@@ -190,7 +202,11 @@ def update_profile():
         return ResponseHandler.success(data=user.to_dictionaries(), status=201)
 
     except Exception as e:
-        pass
+        return ResponseHandler.error(
+            message="An error occurred while updating the profile",
+            data=str(e),
+            status=500,
+        )
 
     finally:
         s.close()
