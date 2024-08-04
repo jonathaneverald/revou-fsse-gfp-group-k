@@ -1,4 +1,5 @@
 from flask import Blueprint, request
+from flask_cors import cross_origin
 from connector.mysql_connector import connection
 from models.locations import LocationModel
 from sqlalchemy.orm import sessionmaker
@@ -51,7 +52,7 @@ def add_location():
         s.close()
 
 
-@location_blueprint.get("/location")
+@location_blueprint.get("/location") 
 def show_all_location():
     Session = sessionmaker(connection)
     s = Session()

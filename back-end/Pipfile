@@ -15,6 +15,7 @@ cerberus = "*"
 flask-sqlalchemy = "*"
 flask-migrate = "*"
 python-slugify = "*"
+flask-cors = "*"
 
 [dev-packages]
 
