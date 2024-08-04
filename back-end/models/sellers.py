@@ -2,6 +2,8 @@ from db import db
 from sqlalchemy.orm import mapped_column, relationship
 from sqlalchemy import String, Integer, DateTime, Numeric, ForeignKey
 from datetime import datetime, timedelta
+from slugify import slugify
+import random
 
 
 def gmt_plus_7_now():
@@ -29,3 +31,9 @@ class SellerModel(db.Model):
             "slug": self.slug,
             "name": self.name,
         }
+
+    @staticmethod
+    def generate_slug(name):
+        slug_base = slugify(name)
+        unique_number = random.randint(100000, 999999)
+        return f"{slug_base}-{unique_number}"

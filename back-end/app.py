@@ -10,6 +10,7 @@ from connector.mysql_connector import connection
 from controllers.auth_controller import auth_blueprint, revoked_tokens
 from controllers.location_controller import location_blueprint
 from controllers.category_controller import category_blueprint
+from controllers.seller_controller import seller_blueprint
 
 from flask_cors import CORS
 
@@ -49,6 +50,7 @@ def register_blueprints(app):
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(location_blueprint)
     app.register_blueprint(category_blueprint)
+    app.register_blueprint(seller_blueprint)
 
 
 def init_login_manager(app):

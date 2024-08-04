@@ -202,6 +202,7 @@ def update_profile():
         return ResponseHandler.success(data=user.to_dictionaries(), status=201)
 
     except Exception as e:
+        s.rollback()
         return ResponseHandler.error(
             message="An error occurred while updating the profile",
             data=str(e),
