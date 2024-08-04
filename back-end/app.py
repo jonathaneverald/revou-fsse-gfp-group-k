@@ -9,6 +9,7 @@ from sqlalchemy.orm import sessionmaker
 from connector.mysql_connector import connection
 from controllers.auth_controller import auth_blueprint, revoked_tokens
 from controllers.location_controller import location_blueprint
+from controllers.category_controller import category_blueprint
 
 
 def create_app():
@@ -36,6 +37,7 @@ def create_app():
 def register_blueprints(app):
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(location_blueprint)
+    app.register_blueprint(category_blueprint)
 
 
 def init_login_manager(app):
