@@ -85,7 +85,7 @@ const Sidebar: React.FC = () => {
 	const toggleShowAllCities = () => setShowAllCities(!showAllCities);
 
 	return (
-		<div className="border w-1/5 md:block hidden my-5 rounded-md bg-white py-6 px-3 overflow-y-auto">
+		<div className="border w-full md:block hidden my-5 rounded-md bg-white py-6 px-3 overflow-y-auto">
 			<div className="mx-2 text-sm font-bold my-2">
 				<span>Category</span>
 			</div>

@@ -14,7 +14,7 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ image, name, slug, originalPrice }) => {
 	return (
-		<Card>
+		<Card className="overflow-hidden">
 			<div className="relative">
 				<Image width={100} height={100} src={image} alt={name} className="aspect-square w-full object-cover" />
 				<Badge className="absolute top-2 right-2 bg-yellow-400 hover:bg-yellow-400 text-black">Premium</Badge>

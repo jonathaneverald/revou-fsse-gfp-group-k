@@ -2,7 +2,7 @@
 const nextConfig = {
 	reactStrictMode: true,
 	images: {
-		domains: ["pickbazar-react-rest.vercel.app"],
+		domains: ["pickbazar-react-rest.vercel.app", "images.unsplash.com"],
 	},
 };
 
