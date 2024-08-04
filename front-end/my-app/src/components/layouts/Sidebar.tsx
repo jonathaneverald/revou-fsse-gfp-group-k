@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { Input } from "../ui/input";
+import { useFetchCities } from "@/hooks/useFetchCities";
+import { useFilteredCategories } from "@/hooks/useFilteredCategories";
+import { useFilteredCities } from "@/hooks/useFilteredCities";
 
 const productCategories = [
 	"Electronics",
@@ -61,28 +64,22 @@ const citiesInIndonesia = [
 const Sidebar: React.FC = () => {
 	const { query } = useRouter();
 	const category = Array.isArray(query.category) ? query.category[0] : query.category || "";
-	const [showAllCategories, setShowAllCategories] = useState(false);
-	const [showAllCities, setShowAllCities] = useState(false);
-	const [categorySearchTerm, setCategorySearchTerm] = useState("");
-	const [citySearchTerm, setCitySearchTerm] = useState("");
 
-	const filteredCategories = productCategories.filter((cat) =>
-		cat.toLowerCase().includes(categorySearchTerm.toLowerCase())
-	);
-	const filteredCities = citiesInIndonesia.filter((city) =>
-		city.toLowerCase().includes(citySearchTerm.toLowerCase())
-	);
+	const { cities, isLoading, error } = useFetchCities();
 
-	const visibleCategories = showAllCategories ? filteredCategories : filteredCategories.slice(0, 5);
-	const visibleCities = showAllCities ? filteredCities : filteredCities.slice(0, 5);
+	const { categorySearchTerm, setCategorySearchTerm, showAllCategories, toggleShowAllCategories, visibleCategories } =
+		useFilteredCategories(productCategories);
+
+	const { citySearchTerm, setCitySearchTerm, showAllCities, toggleShowAllCities, visibleCities, filteredCities } =
+		useFilteredCities(cities);
 
 	const getCategoryClassName = (cat: string) => `
-    mx-2 p-2 rounded-md text-sm font-medium hover:bg-gray-100 hover:text-emerald-600 cursor-pointer my-1
+    mx-2 p-2 capitalize rounded-md text-sm font-medium hover:bg-gray-100 hover:text-emerald-600 cursor-pointer my-1
     ${cat.toLowerCase() === category.toLowerCase() ? "bg-gray-50 text-emerald-600" : "text-gray-700"}
   `;
 
-	const toggleShowAllCategories = () => setShowAllCategories(!showAllCategories);
-	const toggleShowAllCities = () => setShowAllCities(!showAllCities);
+	if (isLoading) return <div>Loading...</div>;
+	if (error) return <div>Error: {error instanceof Error ? error.message : String(error)}</div>;
 
 	return (
 		<div className="border w-full md:block hidden my-5 rounded-md bg-white py-6 px-3 overflow-y-auto">
@@ -102,7 +99,7 @@ const Sidebar: React.FC = () => {
 					<span>{cat}</span>
 				</div>
 			))}
-			{filteredCategories.length > 5 && (
+			{productCategories.length > 5 && (
 				<div
 					className="mx-2 p-2 rounded-md text-sm font-medium text-emerald-600 cursor-pointer my-1"
 					onClick={toggleShowAllCategories}
@@ -127,7 +124,7 @@ const Sidebar: React.FC = () => {
 					key={index}
 					className="mx-2 p-2 rounded-md text-sm font-medium hover:bg-gray-50 hover:text-emerald-600 cursor-pointer my-1 text-gray-700"
 				>
-					<span>{city}</span>
+					<span className="capitalize">{city}</span>
 				</div>
 			))}
 			{filteredCities.length > 5 && (
