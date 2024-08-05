@@ -1,6 +1,12 @@
 import ProductCard from "@/components/card/ProductCard";
 import Sidebar from "@/components/layouts/Sidebar";
+import dynamic from "next/dynamic";
 import React from "react";
+
+const DynamicBreadcrumb = dynamic(
+	() => import("@/components/menu/DynamicBreadcrumb").then((mod) => mod.DynamicBreadcrumb),
+	{ ssr: false }
+);
 
 const Products = () => {
 	const productList = [
@@ -127,13 +133,14 @@ const Products = () => {
 	];
 
 	return (
-		<div className="mx-4 md:container bg-gray-50">
+		<div className="mx-4 md:container bg-gray-50 pb-5">
+			<DynamicBreadcrumb />
 			<div className="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
 				<div className="w-full hidden md:flex">
 					<Sidebar />
 				</div>
 				<div className="md:col-span-2 lg:col-span-3">
-					<div className="my-5 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+					<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
 						{productList.map((product, index) => (
 							<ProductCard key={index} {...product} />
 						))}

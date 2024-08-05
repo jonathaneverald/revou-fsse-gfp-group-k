@@ -65,7 +65,7 @@ const citiesInIndonesia = [
 
 const Sidebar: React.FC = () => {
 	return (
-		<div className="border w-full md:block hidden my-5 h-fit rounded-md bg-white py-6 px-3 overflow-y-auto">
+		<div className="border w-full md:block hidden h-fit rounded-md bg-white py-6 px-3 overflow-y-auto">
 			<Categories />
 			<Cities />
 		</div>

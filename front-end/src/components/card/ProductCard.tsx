@@ -29,7 +29,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ image, name, slug, originalPr
 					deleniti illo incidunt minima!
 				</p>
 				<div className="flex flex-col">
-					<span className="text-green-600 font-bold text-sm">{formatIntToIDR(originalPrice)}</span>
+					<span className="text-primary font-bold text-sm">{formatIntToIDR(originalPrice)}</span>
 				</div>
 			</div>
 		</Card>
