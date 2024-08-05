@@ -52,27 +52,21 @@ def add_location():
         s.close()
 
 
-@location_blueprint.get("/location") 
+@location_blueprint.get("/location")
 def show_all_location():
-    Session = sessionmaker(connection)
-    s = Session()
 
     try:
-        locations = s.query(LocationModel).all()
+        locations = (LocationModel).query.all()
         locations_list = [location.to_dictionaries() for location in locations]
 
         return ResponseHandler.success(data=locations_list, status=200)
 
     except Exception as e:
-        s.rollback()
         return ResponseHandler.error(
             message="An error occurred while showing locations",
             data=str(e),
             status=500,
         )
-
-    finally:
-        s.close()
 
 
 @location_blueprint.get("/location/<slug>")

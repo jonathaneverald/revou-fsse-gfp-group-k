@@ -220,13 +220,12 @@ def update_seller_profile(seller_id):
 @seller_blueprint.get("/seller")
 @jwt_required()
 def show_seller():
-    Session = sessionmaker(connection)
-    s = Session()
-
     try:
         sellers = (
-            s.query(SellerModel, LocationModel.city)
-            .join(LocationModel, SellerModel.location_id == LocationModel.id)
+            SellerModel.query.join(
+                LocationModel, SellerModel.location_id == LocationModel.id
+            )
+            .add_columns(LocationModel.city)
             .all()
         )
 
@@ -245,15 +244,11 @@ def show_seller():
         return ResponseHandler.success(data=sellers_list, status=200)
 
     except Exception as e:
-        s.rollback()
         return ResponseHandler.error(
             message="An error occurred while showing sellers",
             data=str(e),
             status=500,
         )
-
-    finally:
-        s.close()
 
 
 # Show seller detail for users
