@@ -52,25 +52,18 @@ def add_category():
 
 @category_blueprint.get("/category")
 def show_all_category():
-    Session = sessionmaker(connection)
-    s = Session()
-
     try:
-        categories = s.query(CategoryModel).all()
+        categories = CategoryModel.query.all()
         categories_list = [category.to_dictionaries() for category in categories]
 
         return ResponseHandler.success(data=categories_list, status=200)
 
     except Exception as e:
-        s.rollback()
         return ResponseHandler.error(
             message="An error occurred while showing categories",
             data=str(e),
             status=500,
         )
-
-    finally:
-        s.close()
 
 
 @category_blueprint.get("/category/<slug>")
