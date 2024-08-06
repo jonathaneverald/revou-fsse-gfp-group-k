@@ -1,11 +1,8 @@
 import Image from "next/image";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
+import { ProductImagesProps } from "@/types/product";
 
-interface ProductImageProps {
-	images: string[];
-}
-
-const ProductImage: React.FC<ProductImageProps> = ({ images }) => (
+const ProductImage: React.FC<ProductImagesProps> = ({ images }) => (
 	<div className="flex justify-center">
 		<Carousel opts={{ align: "start" }} className="w-full max-w-sm">
 			<CarouselContent>

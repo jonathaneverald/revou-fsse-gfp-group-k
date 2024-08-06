@@ -1,13 +1,6 @@
 import Link from "next/link";
 import { Badge } from "../ui/badge";
-
-interface ProductHeaderProps {
-	name: string;
-	category: string;
-	categorySlug: string;
-	seller: string;
-	sellerSlug: string;
-}
+import { ProductHeaderProps } from "@/types/product";
 
 const ProductHeader: React.FC<ProductHeaderProps> = ({ name }) => (
 	<div>

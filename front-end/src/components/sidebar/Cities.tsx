@@ -15,7 +15,7 @@ const Cities: React.FC = () => {
 
 	const getCityClassName = (cat: string) => `
     mx-2 p-2 capitalize rounded-md text-sm font-medium hover:bg-gray-100 hover:text-emerald-600 cursor-pointer my-1
-    ${cat.toLowerCase() === city.toLowerCase() ? "bg-gray-50 text-emerald-600" : "text-gray-700"}
+    ${cat.toLowerCase() === city.toLowerCase() ? "bg-gray-100 text-emerald-600" : "text-gray-700"}
   `;
 
 	if (isLoading) return <div>Loading...</div>;

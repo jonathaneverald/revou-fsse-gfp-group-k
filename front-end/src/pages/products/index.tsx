@@ -133,7 +133,7 @@ const Products = () => {
 	];
 
 	return (
-		<div className="mx-4 md:container bg-gray-50 pb-5">
+		<div className="md:container px-4 bg-gray-100 pb-5">
 			<DynamicBreadcrumb />
 			<div className="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
 				<div className="w-full hidden md:flex">

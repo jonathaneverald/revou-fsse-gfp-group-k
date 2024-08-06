@@ -1,4 +1,3 @@
-// useFilteredCategories.ts
 import { useState, useMemo } from "react";
 
 export const useFilteredCategories = (categories: string[]) => {

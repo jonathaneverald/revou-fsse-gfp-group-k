@@ -1,15 +1,5 @@
+import { ApiResponse, City } from "@/types/city";
 import useSWR from "swr";
-
-interface City {
-	city: string;
-	id: number;
-	slug: string;
-}
-
-interface ApiResponse {
-	message: string;
-	data: City[];
-}
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 

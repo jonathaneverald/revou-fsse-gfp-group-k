@@ -15,7 +15,7 @@ const Categories: React.FC = () => {
 
 	const getCategoryClassName = (cat: string) => `
     mx-2 p-2 capitalize rounded-md text-sm font-medium hover:bg-gray-100 hover:text-emerald-600 cursor-pointer my-1
-    ${cat.toLowerCase() === category.toLowerCase() ? "bg-gray-50 text-emerald-600" : "text-gray-700"}
+    ${cat.toLowerCase() === category.toLowerCase() ? "bg-gray-100 text-emerald-600" : "text-gray-700"}
   `;
 
 	if (isLoading) return <div>Loading categories...</div>;

@@ -4,19 +4,13 @@ import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import { formatIntToIDR } from "@/utils/currency";
 import Link from "next/link";
-
-interface ProductCardProps {
-	image: string;
-	name: string;
-	slug: string;
-	originalPrice: number;
-}
+import { ProductCardProps } from "@/types/product";
 
 const ProductCard: React.FC<ProductCardProps> = ({ image, name, slug, originalPrice }) => {
 	return (
 		<Card className="overflow-hidden">
 			<div className="relative">
-				<Image width={100} height={100} src={image} alt={name} className="aspect-square w-full object-cover" />
+				<Image width={100} height={100} src={image} alt={name} className="aspect-[4/3] w-full object-cover" />
 				<Badge className="absolute top-2 right-2 bg-yellow-400 hover:bg-yellow-400 text-black">Premium</Badge>
 			</div>
 			<div className="p-4">

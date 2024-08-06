@@ -1,9 +1,6 @@
 import { formatIntToIDR } from "@/utils/currency";
 import { Button } from "../ui/button";
-
-interface ProductDetailsProps {
-	price: number;
-}
+import { ProductDetailsProps } from "@/types/product";
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({ price }) => (
 	<div className="flex flex-col space-y-5">
