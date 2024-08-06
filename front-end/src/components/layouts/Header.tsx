@@ -48,9 +48,11 @@ const Header = () => {
 						/>
 					</div>
 				</form>
-				<Button variant="outline" size="icon">
-					<ShoppingCart className="h-4 w-4" />
-				</Button>
+				<Link href={"/carts"}>
+					<Button variant="outline" size="icon">
+						<ShoppingCart className="h-4 w-4" />
+					</Button>
+				</Link>
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<Button variant="secondary" size="icon" className="rounded-full">
