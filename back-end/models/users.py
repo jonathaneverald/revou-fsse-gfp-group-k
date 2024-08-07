@@ -27,6 +27,8 @@ class UserModel(db.Model, UserMixin):
     sellers = db.relationship("SellerModel", uselist=False, backref="user", lazy=True)
     products = db.relationship("ProductModel", backref="user", lazy=True)
     carts = relationship("CartModel", back_populates="user")
+    vouchers = relationship("VoucherModel", back_populates="users")
+    transactions = relationship("TransactionModel", back_populates="users")
 
     def to_dictionaries(self):
         return {

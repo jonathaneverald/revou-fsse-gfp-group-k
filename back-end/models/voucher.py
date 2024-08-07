@@ -14,7 +14,20 @@ class VoucherModel(db.Model):
     name = mapped_column(String(255), nullable=False)
     discount = mapped_column(Numeric(10, 2))
 
-    transactions = relationship("TransactionModel", back_populates="voucher")
+    users = relationship("UserModel", back_populates="vouchers")
+    sellers = relationship("SellerModel", back_populates="vouchers")
+    transaction_vouchers = relationship(
+        "TransactionVoucherModel", back_populates="vouchers"
+    )
 
     def __repr__(self):
         return f"<Voucher {self.id}>"
+
+    def to_dictionaries(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "seller_id": self.seller_id,
+            "name": self.name,
+            "discount": self.discount,
+        }

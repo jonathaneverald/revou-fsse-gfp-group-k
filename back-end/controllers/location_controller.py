@@ -54,11 +54,9 @@ def add_location():
 
 @location_blueprint.get("/location")
 def show_all_location():
-
     try:
         locations = (LocationModel).query.all()
         locations_list = [location.to_dictionaries() for location in locations]
-
         return ResponseHandler.success(data=locations_list, status=200)
 
     except Exception as e:

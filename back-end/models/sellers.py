@@ -22,6 +22,8 @@ class SellerModel(db.Model):
     name = mapped_column(String(255))
 
     products = db.relationship("ProductModel", backref="seller", lazy=True)
+    vouchers = relationship("VoucherModel", back_populates="sellers")
+    transactions = relationship("TransactionModel", back_populates="sellers")
 
     def to_dictionaries(self):
         return {

@@ -26,6 +26,10 @@ class ProductModel(db.Model):
 
     category = relationship("CategoryModel", back_populates="products")
     carts = relationship("CartModel", back_populates="product")
+    product_images = relationship("ProductImageModel", back_populates="products")
+    transaction_details = relationship(
+        "TransactionDetailModel", back_populates="products"
+    )
 
     def to_dictionaries(self):
         return {
