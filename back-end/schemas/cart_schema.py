@@ -1,5 +1,5 @@
 add_cart_schema = {
-    "product_name": {
+    "product_slug": {
         "type": "string",
         "maxlength": 255,
         "required": True,

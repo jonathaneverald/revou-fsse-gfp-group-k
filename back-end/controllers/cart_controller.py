@@ -34,7 +34,7 @@ def add_cart():
                 message="Data Invalid!", data=validator.errors, status=400
             )
 
-        product = s.query(ProductModel).filter_by(name=data["product_name"]).first()
+        product = s.query(ProductModel).filter_by(slug=data["product_slug"]).first()
         if not product:
             return ResponseHandler.error(message="Product not found", status=404)
 
