@@ -16,6 +16,7 @@ flask-sqlalchemy = "*"
 flask-migrate = "*"
 python-slugify = "*"
 flask-cors = "*"
+cloudinary = "*"
 
 [dev-packages]
 

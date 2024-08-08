@@ -1,6 +1,7 @@
 from flask import Blueprint, request
 from connector.mysql_connector import connection
 from models.products import ProductModel
+from models.product_images import ProductImageModel
 from models.users import UserModel
 from models.category import CategoryModel
 from models.sellers import SellerModel
@@ -12,8 +13,17 @@ from schemas.product_schema import add_product_schema, update_product_schema
 from utils.handle_response import ResponseHandler
 from slugify import slugify
 from math import ceil
+import os
+import cloudinary
+import cloudinary.uploader
 
 product_blueprint = Blueprint("product_blueprint", __name__)
+
+cloudinary.config(
+    cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME"),
+    api_key=os.getenv("CLOUDINARY_API_KEY"),
+    api_secret=os.getenv("CLOUDINARY_API_SECRET"),
+)
 
 
 @product_blueprint.post("/product")
@@ -98,6 +108,68 @@ def add_product():
         s.close()
 
 
+@product_blueprint.post("/product/upload-image/<int:product_id>")
+@jwt_required()
+def upload_product_image(product_id):
+    user_id = get_jwt_identity()
+    Session = sessionmaker(connection)
+    s = Session()
+    s.begin()
+
+    try:
+        current_user = s.query(UserModel).filter_by(id=user_id).first()
+        if not current_user:
+            return ResponseHandler.error(message="User not found", status=404)
+
+        # Check if the current user's role is "seller"
+        if current_user.role != "seller":
+            return ResponseHandler.error(message="Unauthorized access", status=403)
+
+        seller = s.query(SellerModel).filter_by(user_id=current_user.id).first()
+        if not seller:
+            return ResponseHandler.error(message="Seller not found", status=404)
+
+        product = (
+            s.query(ProductModel).filter_by(id=product_id, seller_id=seller.id).first()
+        )
+        if not product:
+            return ResponseHandler.error(
+                message="Product not found or the Product belongs to other seller",
+                status=404,
+            )
+
+        # Get the uploaded files from the request
+        files = request.files.getlist("product_image")
+
+        for file in files:
+            upload_result = cloudinary.uploader.upload(file)
+            image_url = upload_result["secure_url"]
+            product_image = ProductImageModel(
+                product_id=product_id, image_url=image_url
+            )
+            s.add(product_image)
+
+        s.commit()
+
+        product_images = (
+            s.query(ProductImageModel).filter_by(product_id=product_id).all()
+        )
+        return ResponseHandler.success(
+            data=[product_image.to_dictionaries() for product_image in product_images]
+        )
+
+    except Exception as e:
+        s.rollback()
+        return ResponseHandler.error(
+            message="An error occurred while uploading product images",
+            data=str(e),
+            status=500,
+        )
+
+    finally:
+        s.close()
+
+
 @product_blueprint.put("/product/<int:product_id>")
 @jwt_required()
 def update_product(product_id):
@@ -123,7 +195,10 @@ def update_product(product_id):
             s.query(ProductModel).filter_by(id=product_id, seller_id=seller.id).first()
         )
         if not product:
-            return ResponseHandler.error(message="Product not found", status=404)
+            return ResponseHandler.error(
+                message="Product not found or the Product belongs to other seller",
+                status=404,
+            )
 
         data = request.get_json()  # Get input data
         validator = Validator(update_product_schema)
@@ -194,6 +269,82 @@ def update_product(product_id):
         s.rollback()
         return ResponseHandler.error(
             message="An error occurred while updating the product detail",
+            data=str(e),
+            status=500,
+        )
+
+    finally:
+        s.close()
+
+
+@product_blueprint.put("/product/<int:product_id>/<int:image_id>")
+@jwt_required()
+def update_product_image(product_id, image_id):
+    user_id = get_jwt_identity()
+    Session = sessionmaker(connection)
+    s = Session()
+    s.begin()
+
+    try:
+        current_user = s.query(UserModel).filter_by(id=user_id).first()
+        if not current_user:
+            return ResponseHandler.error(message="User not found", status=404)
+
+        # Check if the current user's role is "seller"
+        if current_user.role != "seller":
+            return ResponseHandler.error(message="Unauthorized access", status=403)
+
+        seller = s.query(SellerModel).filter_by(user_id=current_user.id).first()
+        if not seller:
+            return ResponseHandler.error(message="Seller not found", status=404)
+
+        product = (
+            s.query(ProductModel).filter_by(id=product_id, seller_id=seller.id).first()
+        )
+        if not product:
+            return ResponseHandler.error(
+                message="Product not found or the Product belongs to other seller",
+                status=404,
+            )
+
+        # Get the product image
+        product_image = (
+            s.query(ProductImageModel)
+            .filter_by(id=image_id, product_id=product_id)
+            .first()
+        )
+        if not product_image:
+            return ResponseHandler.error(
+                message="Product image not found or the image belongs to other product",
+                status=404,
+            )
+
+        # Delete the previous image from Cloudinary
+        public_id = os.path.splitext(os.path.basename(product_image.image_url))[0]
+        cloudinary.uploader.destroy(public_id)
+
+        new_images = request.files.getlist("product_image")
+        if len(new_images) > 1:
+            return ResponseHandler.error(
+                message="Only one image can be uploaded at a time",
+                status=400,
+            )
+
+        new_image = new_images[0]
+        upload_result = cloudinary.uploader.upload(new_image)
+        image_url = upload_result["secure_url"]
+
+        product_image.product_id = product_id
+        product_image.image_url = image_url
+
+        s.commit()
+
+        return ResponseHandler.success(data=product_image.to_dictionaries())
+
+    except Exception as e:
+        s.rollback()
+        return ResponseHandler.error(
+            message="An error occurred while updating the product image",
             data=str(e),
             status=500,
         )
