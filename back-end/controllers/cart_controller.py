@@ -1,4 +1,5 @@
 from flask import Blueprint, request
+from flask_cors import cross_origin
 from connector.mysql_connector import connection
 from models.cart import CartModel
 from models.products import ProductModel
@@ -15,6 +16,7 @@ cart_blueprint = Blueprint("cart_blueprint", __name__)
 
 
 @cart_blueprint.post("/cart")
+@cross_origin(origin='localhost', headers=['Content-Type','Authorization'])
 @jwt_required()
 def add_cart():
     user_id = get_jwt_identity()
@@ -88,6 +90,7 @@ def add_cart():
 
 
 @cart_blueprint.put("/cart/<int:cart_id>")
+@cross_origin(origin='localhost', headers=['Content-Type','Authorization'])
 @jwt_required()
 def update_cart(cart_id):
     user_id = get_jwt_identity()
