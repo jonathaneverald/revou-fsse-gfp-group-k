@@ -1,4 +1,5 @@
 from flask import Blueprint, request
+from flask_cors import cross_origin
 from connector.mysql_connector import connection
 from models.products import ProductModel
 from models.product_images import ProductImageModel
@@ -27,6 +28,7 @@ cloudinary.config(
 
 
 @product_blueprint.post("/product")
+@cross_origin(origin='localhost', headers=['Content-Type','Authorization'])
 @jwt_required()
 def add_product():
     user_id = get_jwt_identity()
@@ -109,6 +111,7 @@ def add_product():
 
 
 @product_blueprint.post("/product/upload-image/<int:product_id>")
+@cross_origin(origin='localhost', headers=['Content-Type','Authorization'])
 @jwt_required()
 def upload_product_image(product_id):
     user_id = get_jwt_identity()
@@ -171,6 +174,7 @@ def upload_product_image(product_id):
 
 
 @product_blueprint.put("/product/<int:product_id>")
+@cross_origin(origin='localhost', headers=['Content-Type','Authorization'])
 @jwt_required()
 def update_product(product_id):
     user_id = get_jwt_identity()
@@ -278,6 +282,7 @@ def update_product(product_id):
 
 
 @product_blueprint.put("/product/<int:product_id>/<int:image_id>")
+@cross_origin(origin='localhost', headers=['Content-Type','Authorization'])
 @jwt_required()
 def update_product_image(product_id, image_id):
     user_id = get_jwt_identity()
@@ -354,6 +359,7 @@ def update_product_image(product_id, image_id):
 
 
 @product_blueprint.get("/product")
+@cross_origin(origin='localhost', headers=['Content-Type','Authorization'])
 @jwt_required()
 def show_all_product():
     try:
@@ -438,6 +444,7 @@ def show_all_product():
 
 
 @product_blueprint.get("/product/<slug>")
+@cross_origin(origin='localhost', headers=['Content-Type','Authorization'])
 @jwt_required()
 def show_product_by_slug(slug):
     try:
@@ -498,6 +505,7 @@ def show_product_by_slug(slug):
 
 
 @product_blueprint.delete("/product/<int:product_id>")
+@cross_origin(origin='localhost', headers=['Content-Type','Authorization'])
 @jwt_required()
 def delete_product(product_id):
     user_id = get_jwt_identity()
