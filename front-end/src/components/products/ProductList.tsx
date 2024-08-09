@@ -69,7 +69,7 @@ const ProductList = () => {
 						key={product.id}
 						image="https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2"
 						name={product.name}
-						product_slug={product.product_slug}
+						product_slug={product.slug}
 						description={product.description}
 						originalPrice={product.price}
 						type={product.type}

@@ -64,7 +64,7 @@ export interface Product {
 	price: number;
 	quantity: number;
 	seller_name: string;
-	product_slug: string;
+	slug: string;
 	type: string;
 	seller_slug: string;
 	location_city: string;

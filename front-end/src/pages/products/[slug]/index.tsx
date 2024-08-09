@@ -38,7 +38,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, error }) => {
 		return <p>Product not found</p>;
 	}
 
-	const { product_slug, category_name, description, name, price, seller_name, type, location_city } = product;
+	const { slug, category_name, description, name, price, seller_name, type, location_city } = product;
 
 	return (
 		<div className="mx-4 md:container">
@@ -54,7 +54,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, error }) => {
 					sellerSlug={seller_name}
 					description={description}
 					type={type}
-					productSlug={product_slug}
+					productSlug={slug}
 					locationCity={location_city}
 				/>
 			</div>
