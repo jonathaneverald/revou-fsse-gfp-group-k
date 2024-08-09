@@ -8,7 +8,7 @@ const useUserProfile = () => {
 
 	const fetcher = async (url: string) => {
 		setToken(
-			"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcyMzE4OTcyOCwianRpIjoiMDQ4NjJiOTctM2YxOC00NTU0LTljOGMtNGUxNjRlMWJkYjRmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNzIzMTg5NzI4LCJjc3JmIjoiODIxOWI2OGYtNDcxYy00NzY1LWJlNmUtNWQ5ZjZjNGYyOGYzIiwiZXhwIjoxNzIzMTkzMzI4fQ.D1Fk8YTYGXRo1Hj2esyrZ-E55y6u7RebCl9f79E3wgA"
+			"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcyMzE5NjExOCwianRpIjoiZGU5YWMxY2ItYmFkYS00YTY4LTg3ZDEtZTVhNWRlN2FmNTcyIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNzIzMTk2MTE4LCJjc3JmIjoiMzdlNTg1ZTItZThjMS00ZmZhLThmZmItNTJlY2YwMGNlZDhjIiwiZXhwIjoxNzIzNTU2MTE4fQ.Q-wcgrIoMyhHHdHwbe0nEBEcrFa2KEYGx8A93rmFxyI"
 		);
 		const token = getToken();
 

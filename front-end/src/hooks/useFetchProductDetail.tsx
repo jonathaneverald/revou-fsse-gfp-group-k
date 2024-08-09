@@ -1,11 +1,12 @@
-const useFetchProductDetail = async (slug: string) => {
+const useFetchProductDetail = async (slug: string, token: string) => {
 	try {
-		const res = await fetch(`http://127.0.0.1:5000/product/${slug}`);
-		if (!res.ok) {
-			throw new Error("Failed to fetch product data");
-		}
-		const data = await res.json();
-		return data.data;
+		const res = await fetch(`http://127.0.0.1:5000/product/${slug}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+
+		return res.json();
 	} catch (error) {
 		throw new Error((error as Error).message);
 	}
