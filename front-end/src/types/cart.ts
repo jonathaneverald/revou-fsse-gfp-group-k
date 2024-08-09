@@ -2,10 +2,10 @@ import { VoucherMap } from "./voucher";
 
 export interface CartItem {
 	id: number;
-	name: string;
+	product_name: string;
 	price: number;
 	quantity: number;
-	store: string;
+	seller_name: string;
 }
 
 export interface StoreSubtotal {

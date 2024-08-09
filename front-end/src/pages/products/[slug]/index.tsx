@@ -1,46 +1,53 @@
-// import { DynamicBreadcrumb } from "@/components/menu/DynamicBreadcrumb";
+import React from "react";
+import dynamic from "next/dynamic";
+import { GetServerSideProps } from "next";
 import ProductImage from "@/components/products/ProductImage";
 import ProductInfo from "@/components/products/ProductInfo";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { formatIntToIDR } from "@/utils/currency";
-import dynamic from "next/dynamic";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import React from "react";
+import useFetchProductDetail from "@/hooks/useFetchProductDetail";
+import { ProductDetailProps } from "@/types/product";
 
 const DynamicBreadcrumb = dynamic(
 	() => import("@/components/menu/DynamicBreadcrumb").then((mod) => mod.DynamicBreadcrumb),
 	{ ssr: false }
 );
 
-const ProductDetail = () => {
-	const router = useRouter();
-	const { slug } = router.query;
+export const getServerSideProps: GetServerSideProps<ProductDetailProps> = async (context) => {
+	const slug = context.query.slug as string;
 
-	const images = ["https://images.unsplash.com/photo-1518843875459-f738682238a6"];
-	const name = slug as string;
-	const price = 400000;
-	const category = "Furniture";
-	const categorySlug = "furniture";
-	const seller = "Furniture Shop";
-	const sellerSlug = "furniture-shop";
+	try {
+		const product = await useFetchProductDetail(slug);
+		return { props: { product } };
+	} catch (error) {
+		return { props: { error: (error as Error).message } };
+	}
+};
+
+const ProductDetail: React.FC<ProductDetailProps> = ({ product, error }) => {
+	if (error) {
+		return <p className="text-red-500">Failed to load product</p>;
+	}
+
+	if (!product) {
+		return <p>Product not found</p>;
+	}
+
+	const { product_slug, category_name, description, name, price, seller_name, type } = product;
 
 	return (
 		<div className="mx-4 md:container">
 			<DynamicBreadcrumb />
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
-				<ProductImage images={images} />
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10 bg-white rounded-md p-10">
+				<ProductImage images={["https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2"]} />
 				<ProductInfo
 					name={name}
 					price={price}
-					category={category}
-					categorySlug={categorySlug}
-					seller={seller}
-					sellerSlug={sellerSlug}
+					category={category_name}
+					categorySlug={category_name}
+					seller={seller_name}
+					sellerSlug={seller_name}
+					description={description}
+					type={type}
+					productSlug={product_slug}
 				/>
 			</div>
 		</div>

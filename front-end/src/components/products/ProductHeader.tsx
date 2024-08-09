@@ -2,14 +2,18 @@ import Link from "next/link";
 import { Badge } from "../ui/badge";
 import { ProductHeaderProps } from "@/types/product";
 
-const ProductHeader: React.FC<ProductHeaderProps> = ({ name }) => (
+const ProductHeader: React.FC<ProductHeaderProps> = ({ name, category, type, seller }) => (
 	<div>
 		<div className="flex gap-2 my-2">
-			<Badge>Buah</Badge>
-			<Badge>Premium</Badge>
+			<Link href={`/products?category=${category}`}>
+				<Badge className="capitalize">{category}</Badge>
+			</Link>
+			<Link href={`/products?city=${type}`}>
+				<Badge className="capitalize">{type}</Badge>
+			</Link>
 		</div>
 		<Link href="/seller/furniture-shop">
-			<h2 className="font-semibold text-sm hover:underline">Furniture Shop</h2>
+			<h2 className="font-semibold text-sm hover:underline capitalize">{seller}</h2>
 		</Link>
 		<h2 className="text-2xl text-gray-950 capitalize font-semibold">{name}</h2>
 	</div>

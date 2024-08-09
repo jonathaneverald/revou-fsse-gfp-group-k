@@ -2,7 +2,8 @@ import React from "react";
 import { Input } from "../ui/input";
 import { useFilteredCategories } from "@/hooks/useFilteredCategories";
 import { useRouter } from "next/router";
-import { useFetchCategories } from "@/hooks/useFetchCategories"; // Import the new hook
+import { useFetchCategories } from "@/hooks/useFetchCategories";
+import SidebarItemLoading from "../loading/SidebarCategoryLoading";
 
 const Categories: React.FC = () => {
 	const { query } = useRouter();
@@ -18,7 +19,7 @@ const Categories: React.FC = () => {
     ${cat.toLowerCase() === category.toLowerCase() ? "bg-gray-100 text-emerald-600" : "text-gray-700"}
   `;
 
-	if (isLoading) return <div>Loading categories...</div>;
+	if (isLoading) return <SidebarItemLoading type="Category" />;
 
 	if (error) return <div>Error: {error instanceof Error ? error.message : String(error)}</div>;
 
@@ -42,7 +43,7 @@ const Categories: React.FC = () => {
 			))}
 			{categories.length > 5 && (
 				<div
-					className="mx-2 p-2 rounded-md text-sm font-medium text-emerald-600 cursor-pointer my-1"
+					className="mx-2 p-2 rounded-md text-sm font-medium cursor-pointer my-1"
 					onClick={toggleShowAllCategories}
 				>
 					{showAllCategories ? "Show Less" : "Show More"}

@@ -22,13 +22,13 @@ const CartItems: React.FC<CartItemsProps> = ({ cartItems, vouchers, updateQuanti
 						<div className="w-full flex justify-between flex-col">
 							<div className="grid grid-cols-3 mt-2">
 								<div className="font-semibold text-gray-500 text-xs col-span-3 capitalize">
-									{item.store}
+									{item.seller_name}
 									{vouchers[item.store] && (
 										<span className="ml-2 text-green-500">({vouchers[item.store].code})</span>
 									)}
 								</div>
 								<div className="font-semibold line-clamp-1 md:line-clamp-none text-xs md:text-sm col-span-3 md:col-span-2">
-									{item.name}
+									{item.product_name}
 								</div>
 								<div className="font-semibold md:text-end">
 									<span className="text-sm">{formatIntToIDR(item.price * item.quantity)}</span>

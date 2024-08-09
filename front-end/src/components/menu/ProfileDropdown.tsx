@@ -4,76 +4,55 @@ import {
 	DropdownMenuGroup,
 	DropdownMenuItem,
 	DropdownMenuLabel,
-	DropdownMenuPortal,
 	DropdownMenuSeparator,
-	DropdownMenuShortcut,
-	DropdownMenuSub,
-	DropdownMenuSubContent,
-	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import useUserProfile from "@/hooks/useAuthenticatedUser";
+import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
+import EditProfile from "@/components/form/EditProfile";
+import { useState } from "react";
 
-const ProfileDropdown = () => {
+const ProfileDropdown: React.FC = () => {
+	const { user, error, isLoading } = useUserProfile();
+	const [isOpen, setIsOpen] = useState(false);
+
+	if (isLoading) {
+		return <Skeleton className="h-10 w-10 bg-gray-300 rounded-full" />;
+	}
+
+	if (error) {
+		return <div>Error: {error.message}</div>;
+	}
+
 	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
-				<Avatar className="cursor-pointer">
-					<AvatarImage src="https://github.com/shadcn.pn" />
-					<AvatarFallback>IL</AvatarFallback>
-				</Avatar>
-			</DropdownMenuTrigger>
-			<DropdownMenuContent className="w-56">
-				<DropdownMenuLabel>My Account</DropdownMenuLabel>
-				<DropdownMenuSeparator />
-				<DropdownMenuGroup>
-					<DropdownMenuItem>
-						Profile
-						<DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-					</DropdownMenuItem>
-					<DropdownMenuItem>
-						Billing
-						<DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-					</DropdownMenuItem>
-					<DropdownMenuItem>
-						Settings
-						<DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-					</DropdownMenuItem>
-					<DropdownMenuItem>
-						Keyboard shortcuts
-						<DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
-					</DropdownMenuItem>
-				</DropdownMenuGroup>
-				<DropdownMenuSeparator />
-				<DropdownMenuGroup>
-					<DropdownMenuItem>Team</DropdownMenuItem>
-					<DropdownMenuSub>
-						<DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
-						<DropdownMenuPortal>
-							<DropdownMenuSubContent>
-								<DropdownMenuItem>Email</DropdownMenuItem>
-								<DropdownMenuItem>Message</DropdownMenuItem>
-								<DropdownMenuSeparator />
-								<DropdownMenuItem>More...</DropdownMenuItem>
-							</DropdownMenuSubContent>
-						</DropdownMenuPortal>
-					</DropdownMenuSub>
-					<DropdownMenuItem>
-						New Team
-						<DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
-					</DropdownMenuItem>
-				</DropdownMenuGroup>
-				<DropdownMenuSeparator />
-				<DropdownMenuItem>GitHub</DropdownMenuItem>
-				<DropdownMenuItem>Support</DropdownMenuItem>
-				<DropdownMenuItem disabled>API</DropdownMenuItem>
-				<DropdownMenuSeparator />
-				<DropdownMenuItem>
-					Log out
-					<DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-				</DropdownMenuItem>
-			</DropdownMenuContent>
-		</DropdownMenu>
+		<>
+			<EditProfile isOpen={isOpen} setIsOpen={setIsOpen} user={user} />
+			<DropdownMenu>
+				<DropdownMenuTrigger asChild>
+					<Avatar className="cursor-pointer">
+						<AvatarFallback>{user?.email?.slice(0, 2).toUpperCase() || "U"}</AvatarFallback>
+					</Avatar>
+				</DropdownMenuTrigger>
+				<DropdownMenuContent className="w-56 mr-6">
+					<DropdownMenuLabel>{user?.email || "My Account"}</DropdownMenuLabel>
+					<DropdownMenuSeparator />
+					<DropdownMenuGroup>
+						<DropdownMenuItem onClick={() => setIsOpen(true)} className="cursor-pointer">
+							Profile
+						</DropdownMenuItem>
+
+						<Link href={"/transaction"}>
+							<DropdownMenuItem className="cursor-pointer">Transaction</DropdownMenuItem>
+						</Link>
+					</DropdownMenuGroup>
+
+					<DropdownMenuSeparator />
+					<DropdownMenuItem>Log out</DropdownMenuItem>
+				</DropdownMenuContent>
+			</DropdownMenu>
+		</>
 	);
 };
 

@@ -3,6 +3,7 @@ import { Input } from "../ui/input";
 import { useFilteredCities } from "@/hooks/useFilteredCities";
 import { useFetchCities } from "@/hooks/useFetchCities";
 import { useRouter } from "next/router";
+import SidebarItemLoading from "../loading/SidebarCategoryLoading";
 
 const Cities: React.FC = () => {
 	const { query } = useRouter();
@@ -18,7 +19,7 @@ const Cities: React.FC = () => {
     ${cat.toLowerCase() === city.toLowerCase() ? "bg-gray-100 text-emerald-600" : "text-gray-700"}
   `;
 
-	if (isLoading) return <div>Loading...</div>;
+	if (isLoading) return <SidebarItemLoading type="Cities" />;
 
 	if (error) return <div>Error: {error instanceof Error ? error.message : String(error)}</div>;
 
@@ -42,7 +43,7 @@ const Cities: React.FC = () => {
 			))}
 			{filteredCities.length > 5 && (
 				<div
-					className="mx-2 p-2 rounded-md text-sm font-medium text-emerald-600 cursor-pointer my-1"
+					className="mx-2 p-2 rounded-md text-sm font-medium cursor-pointer my-1"
 					onClick={toggleShowAllCities}
 				>
 					{showAllCities ? "Show Less" : "Show More"}
