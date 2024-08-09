@@ -10,8 +10,28 @@ const fetcher = async (url: string) => {
 	}).then((res) => res.json());
 };
 
-const useFetchProducts = (page: number, per_page: number, category?: string, city?: string, q?: string) => {
-	const url = `http://127.0.0.1:5000/product?page=${page}&per_page=${per_page}&category=${category}&city=${city}&q=${q}`;
+const useFetchProducts = ({
+	page,
+	per_page,
+	category = "",
+	location = "",
+	q = "",
+}: {
+	page: number;
+	per_page: number;
+	category?: string;
+	location?: string;
+	q?: string;
+}) => {
+	const params = new URLSearchParams({
+		page: page.toString(),
+		per_page: per_page.toString(),
+		category,
+		location,
+		q,
+	}).toString();
+
+	const url = `http://127.0.0.1:5000/product?${params}`;
 
 	const { data, error } = useSWR(url, fetcher);
 

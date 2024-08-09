@@ -6,7 +6,8 @@ import { useFetchCategories } from "@/hooks/useFetchCategories";
 import SidebarItemLoading from "../loading/SidebarCategoryLoading";
 
 const Categories: React.FC = () => {
-	const { query } = useRouter();
+	const router = useRouter();
+	const { query } = router;
 	const category = Array.isArray(query.category) ? query.category[0] : query.category || "";
 
 	const { categories, isLoading, error } = useFetchCategories();
@@ -18,6 +19,26 @@ const Categories: React.FC = () => {
     mx-2 p-2 capitalize rounded-md text-sm font-medium hover:bg-gray-100 hover:text-emerald-600 cursor-pointer my-1
     ${cat.toLowerCase() === category.toLowerCase() ? "bg-gray-100 text-emerald-600" : "text-gray-700"}
   `;
+
+	const handleCategoryClick = (cat: string) => {
+		router.push({
+			pathname: "/products",
+			query: { ...query, page: 1, category: cat },
+		});
+
+		const newQuery: Record<string, string> = { ...query, page: "1" };
+
+		if (cat === category) {
+			delete newQuery.category;
+		} else {
+			newQuery.category = cat;
+		}
+
+		router.push({
+			pathname: "/products",
+			query: newQuery,
+		});
+	};
 
 	if (isLoading) return <SidebarItemLoading type="Category" />;
 
@@ -37,8 +58,12 @@ const Categories: React.FC = () => {
 				/>
 			</div>
 			{visibleCategories.map((cat, index) => (
-				<div key={index} className={getCategoryClassName(cat)}>
-					<span>{cat}</span>
+				<div
+					key={index}
+					className={getCategoryClassName(cat.slug)}
+					onClick={() => handleCategoryClick(cat.slug)}
+				>
+					<span>{cat.name}</span>
 				</div>
 			))}
 			{categories.length > 5 && (

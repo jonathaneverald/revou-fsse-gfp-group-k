@@ -11,7 +11,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 export const useFetchCategories = () => {
 	const { data, error } = useSWR<ApiResponseCategoy, Error>("http://127.0.0.1:5000/category", fetcher);
 
-	const categories = data && data.message === "Success" ? data.data.map((category: Category) => category.name) : [];
+	const categories = data && data.message === "Success" ? data.data.map((category: Category) => category) : [];
 
 	return {
 		categories,

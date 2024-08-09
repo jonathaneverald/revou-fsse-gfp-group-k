@@ -1,11 +1,12 @@
+import { Category } from "@/types/category";
 import { useState, useMemo } from "react";
 
-export const useFilteredCategories = (categories: string[]) => {
+export const useFilteredCategories = (categories: Category[]) => {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [showAll, setShowAll] = useState(false);
 
 	const filteredCategories = useMemo(() => {
-		return categories.filter((category) => category.toLowerCase().includes(searchTerm.toLowerCase()));
+		return categories.filter((category) => category.name.toLowerCase().includes(searchTerm.toLowerCase()));
 	}, [categories, searchTerm]);
 
 	const visibleCategories = showAll ? filteredCategories : filteredCategories.slice(0, 5);

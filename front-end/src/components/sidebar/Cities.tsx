@@ -6,8 +6,9 @@ import { useRouter } from "next/router";
 import SidebarItemLoading from "../loading/SidebarCategoryLoading";
 
 const Cities: React.FC = () => {
-	const { query } = useRouter();
-	const city = Array.isArray(query.city) ? query.city[0] : query.city || "";
+	const router = useRouter();
+	const { query } = router;
+	const city = Array.isArray(query.location) ? query.location[0] : query.location || "";
 
 	const { cities, isLoading, error } = useFetchCities();
 
@@ -18,6 +19,21 @@ const Cities: React.FC = () => {
     mx-2 p-2 capitalize rounded-md text-sm font-medium hover:bg-gray-100 hover:text-emerald-600 cursor-pointer my-1
     ${cat.toLowerCase() === city.toLowerCase() ? "bg-gray-100 text-emerald-600" : "text-gray-700"}
   `;
+
+	const handleCityClick = (cit: string) => {
+		const newQuery: Record<string, string> = { ...query, page: "1" };
+
+		if (cit === city) {
+			delete newQuery.location;
+		} else {
+			newQuery.location = cit;
+		}
+
+		router.push({
+			pathname: "/products",
+			query: newQuery,
+		});
+	};
 
 	if (isLoading) return <SidebarItemLoading type="Cities" />;
 
@@ -37,8 +53,8 @@ const Cities: React.FC = () => {
 				/>
 			</div>
 			{visibleCities.map((city, index) => (
-				<div key={index} className={getCityClassName(city)}>
-					<span>{city}</span>
+				<div key={index} className={getCityClassName(city.slug)} onClick={() => handleCityClick(city.slug)}>
+					<span>{city.city}</span>
 				</div>
 			))}
 			{filteredCities.length > 5 && (

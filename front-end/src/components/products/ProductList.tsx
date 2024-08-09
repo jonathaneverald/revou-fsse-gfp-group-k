@@ -16,17 +16,17 @@ import {
 
 const ProductList = () => {
 	const router = useRouter();
-	const { category, city, q, page = 1, per_page = 12 } = router.query;
+	const { category, location, q, page = 1, per_page = 12 } = router.query;
 
 	const [currentPage, setCurrentPage] = useState<number>(Number(page));
 
-	const { products, isLoading, isError } = useFetchProducts(
-		currentPage,
-		Number(per_page),
-		category as string,
-		city as string,
-		q as string
-	);
+	const { products, isLoading, isError } = useFetchProducts({
+		page: currentPage,
+		per_page: Number(per_page),
+		category: category as string,
+		location: location as string,
+		q: q as string,
+	});
 
 	useEffect(() => {
 		if (Number(page) !== currentPage) {

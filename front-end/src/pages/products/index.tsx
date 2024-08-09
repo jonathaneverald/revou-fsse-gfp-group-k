@@ -1,11 +1,6 @@
 import Sidebar from "@/components/layouts/Sidebar";
 import ProductList from "@/components/products/ProductList";
-import Categories from "@/components/sidebar/Categories";
-import Cities from "@/components/sidebar/Cities";
 import FilterSheet from "@/components/sidebar/FilterSheet";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { SlidersHorizontal } from "lucide-react";
 import dynamic from "next/dynamic";
 import React from "react";
 
