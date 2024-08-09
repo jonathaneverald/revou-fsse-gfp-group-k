@@ -1,4 +1,5 @@
 from flask import Blueprint, request
+from flask_cors import cross_origin
 from connector.mysql_connector import connection
 from models.users import UserModel
 from sqlalchemy.orm import sessionmaker
@@ -123,6 +124,7 @@ def login():
 
 
 @auth_blueprint.get("/profile")
+@cross_origin(origin='localhost', headers=['Content-Type','Authorization'])
 @jwt_required()
 def profile():
     user_id = get_jwt_identity()
