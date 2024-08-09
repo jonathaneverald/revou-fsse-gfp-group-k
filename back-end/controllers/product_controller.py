@@ -361,83 +361,73 @@ def show_all_product():
         page = request.args.get("page", default=None, type=int)
         per_page = request.args.get("per_page", default=None, type=int)
 
-        if page is None or per_page is None:
-            products = (
-                ProductModel.query.join(
-                    SellerModel, ProductModel.seller_id == SellerModel.id
-                )
-                .join(CategoryModel, ProductModel.category_id == CategoryModel.id)
-                .add_columns(SellerModel.name, SellerModel.slug, CategoryModel.name)
-                .all()
+        # Get query parameters for search filters
+        product_name = request.args.get("product_name", default=None, type=str)
+        location_slug = request.args.get("location_slug", default=None, type=str)
+        category_slug = request.args.get("category_slug", default=None, type=str)
+
+        product_query = (
+            ProductModel.query.join(
+                SellerModel, ProductModel.seller_id == SellerModel.id
+            )
+            .join(CategoryModel, ProductModel.category_id == CategoryModel.id)
+            .join(LocationModel, SellerModel.location_id == LocationModel.id)
+            .add_columns(SellerModel.name, SellerModel.slug, CategoryModel.name)
+        )
+
+        # Apply search filters
+        if product_name:
+            product_query = product_query.filter(
+                ProductModel.name.ilike(f"%{product_name}%")
+            )
+        if location_slug:
+            product_query = product_query.filter(
+                LocationModel.slug.ilike(f"%{location_slug}%")
+            )
+        if category_slug:
+            product_query = product_query.filter(
+                CategoryModel.slug.ilike(f"%{category_slug}%")
             )
 
-            products_list = [
-                {
-                    "id": product.id,
-                    "user_id": product.user_id,
-                    "category_id": product.category_id,
-                    "seller_id": product.seller_id,
-                    "product_slug": product.slug,
-                    "name": product.name,
-                    "price": product.price,
-                    "quantity": product.quantity,
-                    "description": product.description,
-                    "type": product.type,
-                    "seller_name": seller_name,
-                    "seller_slug": seller_slug,
-                    "category_name": category_name,
-                }
-                for product, seller_name, seller_slug, category_name in products
-            ]
-
-            return ResponseHandler.success(data=products_list, status=200)
-
-        else:
-            # Get the total number of products
-            total_products = ProductModel.query.count()
-
-            # Calculate the total number of pages
+        if page and per_page:
+            pagination = product_query.paginate(
+                page=page, per_page=per_page, error_out=False
+            )
+            products = pagination.items
+            total_products = product_query.count()
             total_pages = ceil(total_products / per_page)
+        else:
+            products = product_query.all()
 
-            products = (
-                ProductModel.query.join(
-                    SellerModel, ProductModel.seller_id == SellerModel.id
-                )
-                .join(CategoryModel, ProductModel.category_id == CategoryModel.id)
-                .add_columns(SellerModel.name, SellerModel.slug, CategoryModel.name)
-                .paginate(page=page, per_page=per_page, error_out=False)
-            )
-
-            products_list = [
-                {
-                    "id": product.id,
-                    "user_id": product.user_id,
-                    "category_id": product.category_id,
-                    "seller_id": product.seller_id,
-                    "product_slug": product.slug,
-                    "name": product.name,
-                    "price": product.price,
-                    "quantity": product.quantity,
-                    "description": product.description,
-                    "type": product.type,
-                    "seller_name": seller_name,
-                    "seller_slug": seller_slug,
-                    "category_name": category_name,
-                }
-                for product, seller_name, seller_slug, category_name in products.items
-            ]
-
-            pagination = {
-                "total_products": total_products,
-                "current_page": page,
-                "total_pages": total_pages,
-                "next_page": page + 1 if page < total_pages else None,
-                "prev_page": page - 1 if page > 1 else None,
+        products_list = [
+            {
+                # Gets all column objects on the table and iterates each column name
+                **{
+                    column.name: getattr(product, column.name)
+                    for column in ProductModel.__table__.columns
+                },
+                "seller_name": seller_name,
+                "seller_slug": seller_slug,
+                "category_name": category_name,
             }
+            for product, seller_name, seller_slug, category_name in products
+        ]
 
-            response = {"data": products_list, "pagination": pagination}
+        if page and per_page:
+            response = {
+                "data": products_list,
+                "pagination": {
+                    "total_products": total_products,
+                    "current_page": page,
+                    "total_pages": total_pages,
+                    "next_page": page + 1 if page < total_pages else None,
+                    "prev_page": page - 1 if page > 1 else None,
+                },
+            }
+        else:
+            response = {"data": products_list}
 
-            return ResponseHandler.success(data=response, status=200)
+        return ResponseHandler.success(data=response, status=200)
 
     except Exception as e:
         return ResponseHandler.error(

@@ -44,9 +44,17 @@ def register():
         phone_number = data.get("phone_number")
 
         # Check if the email already exists
-        existing_user = s.query(UserModel).filter((UserModel.email == email)).first()
-        if existing_user:
-            return ResponseHandler.error(message="User already exists", status=409)
+        existing_email = s.query(UserModel).filter((UserModel.email == email)).first()
+        if existing_email:
+            return ResponseHandler.error(message="Email already exists", status=409)
+
+        existing_phone_number = (
+            s.query(UserModel).filter((UserModel.phone_number == phone_number)).first()
+        )
+        if existing_phone_number:
+            return ResponseHandler.error(
+                message="Phone Number already exists", status=409
+            )
 
         # Create new user
         new_user = UserModel(
@@ -124,7 +132,7 @@ def login():
 
 
 @auth_blueprint.get("/profile")
-@cross_origin(origin='localhost', headers=['Content-Type','Authorization'])
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def profile():
     user_id = get_jwt_identity()
@@ -139,6 +147,7 @@ def profile():
         return ResponseHandler.success(
             data={
                 "id": user.id,
+                "name": user.name,
                 "email": user.email,
                 "role": user.role,
                 "address": user.address,
@@ -190,9 +199,17 @@ def update_profile():
         phone_number = data.get("phone_number")
 
         # Check if the email already exists
-        existing_user = s.query(UserModel).filter((UserModel.email == email)).first()
-        if existing_user:
-            return ResponseHandler.error(message="User already exists", status=409)
+        existing_email = s.query(UserModel).filter((UserModel.email == email)).first()
+        if existing_email:
+            return ResponseHandler.error(message="Email already exists", status=409)
+
+        existing_phone_number = (
+            s.query(UserModel).filter((UserModel.phone_number == phone_number)).first()
+        )
+        if existing_phone_number:
+            return ResponseHandler.error(
+                message="Phone Number already exists", status=409
+            )
 
         user.email = email
         user.set_password(password)
