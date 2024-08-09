@@ -470,16 +470,11 @@ def show_product_by_slug(slug):
         ) = product_result
 
         product_detail = {
-            "id": product.id,
-            "user_id": product.user_id,
-            "category_id": product.category_id,
-            "seller_id": product.seller_id,
-            "product_slug": product.slug,
-            "name": product.name,
-            "price": product.price,
-            "quantity": product.quantity,
-            "description": product.description,
-            "type": product.type,
+            # Gets all column objects on the table and iterates each column name
+            **{
+                column.name: getattr(product, column.name)
+                for column in ProductModel.__table__.columns
+            },
             "seller_name": seller_name,
             "category_name": category_name,
             "seller_slug": seller_slug,
