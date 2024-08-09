@@ -28,7 +28,7 @@ cloudinary.config(
 
 
 @product_blueprint.post("/product")
-@cross_origin(origin='localhost', headers=['Content-Type','Authorization'])
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def add_product():
     user_id = get_jwt_identity()
@@ -111,7 +111,7 @@ def add_product():
 
 
 @product_blueprint.post("/product/upload-image/<int:product_id>")
-@cross_origin(origin='localhost', headers=['Content-Type','Authorization'])
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def upload_product_image(product_id):
     user_id = get_jwt_identity()
@@ -174,7 +174,7 @@ def upload_product_image(product_id):
 
 
 @product_blueprint.put("/product/<int:product_id>")
-@cross_origin(origin='localhost', headers=['Content-Type','Authorization'])
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def update_product(product_id):
     user_id = get_jwt_identity()
@@ -282,7 +282,7 @@ def update_product(product_id):
 
 
 @product_blueprint.put("/product/<int:product_id>/<int:image_id>")
-@cross_origin(origin='localhost', headers=['Content-Type','Authorization'])
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def update_product_image(product_id, image_id):
     user_id = get_jwt_identity()
@@ -359,7 +359,7 @@ def update_product_image(product_id, image_id):
 
 
 @product_blueprint.get("/product")
-@cross_origin(origin='localhost', headers=['Content-Type','Authorization'])
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def show_all_product():
     try:
@@ -369,8 +369,8 @@ def show_all_product():
 
         # Get query parameters for search filters
         product_name = request.args.get("product_name", default=None, type=str)
-        location_slug = request.args.get("location_slug", default=None, type=str)
-        category_slug = request.args.get("category_slug", default=None, type=str)
+        location = request.args.get("location", default=None, type=str)
+        category = request.args.get("category", default=None, type=str)
 
         product_query = (
             ProductModel.query.join(
@@ -386,13 +386,13 @@ def show_all_product():
             product_query = product_query.filter(
                 ProductModel.name.ilike(f"%{product_name}%")
             )
-        if location_slug:
+        if location:
             product_query = product_query.filter(
-                LocationModel.slug.ilike(f"%{location_slug}%")
+                LocationModel.slug.ilike(f"%{location}%")
             )
-        if category_slug:
+        if category:
             product_query = product_query.filter(
-                CategoryModel.slug.ilike(f"%{category_slug}%")
+                CategoryModel.slug.ilike(f"%{category}%")
             )
 
         if page and per_page:
@@ -444,7 +444,7 @@ def show_all_product():
 
 
 @product_blueprint.get("/product/<slug>")
-@cross_origin(origin='localhost', headers=['Content-Type','Authorization'])
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def show_product_by_slug(slug):
     try:
@@ -500,7 +500,7 @@ def show_product_by_slug(slug):
 
 
 @product_blueprint.delete("/product/<int:product_id>")
-@cross_origin(origin='localhost', headers=['Content-Type','Authorization'])
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def delete_product(product_id):
     user_id = get_jwt_identity()
