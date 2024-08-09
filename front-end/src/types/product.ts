@@ -27,7 +27,6 @@ export interface ProductCardProps {
 export interface ProductDetailsProps {
 	price: number;
 	description: string;
-	productSlug: string;
 }
 
 export interface ProductHeaderProps {
@@ -37,6 +36,7 @@ export interface ProductHeaderProps {
 	seller: string;
 	sellerSlug: string;
 	type: string;
+	locationCity: string;
 }
 
 export interface ProductImagesProps {
@@ -53,6 +53,7 @@ export interface ProductInfoProps {
 	description: string;
 	type: string;
 	productSlug: string;
+	locationCity: string;
 }
 
 export interface Product {
@@ -66,6 +67,7 @@ export interface Product {
 	product_slug: string;
 	type: string;
 	seller_slug: string;
+	location_city: string;
 }
 
 export interface ProductDetailProps {

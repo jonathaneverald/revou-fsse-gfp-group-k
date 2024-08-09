@@ -13,10 +13,17 @@ const DynamicBreadcrumb = dynamic(
 
 export const getServerSideProps: GetServerSideProps<ProductDetailProps> = async (context) => {
 	const slug = context.query.slug as string;
+	context.res.setHeader(
+		"Set-Cookie",
+		"authToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcyMzIwNzE0NSwianRpIjoiNDcwODg4ZWQtZTFlMS00YWJlLWIyZTctMmFiYjJkOTQ5Yjc5IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNzIzMjA3MTQ1LCJjc3JmIjoiZDM4MTJkNTUtMzFjNy00YjM4LWEzMmItZGU0NjdkYjZlNDdhIiwiZXhwIjoxNzIzNTY3MTQ1fQ.4c9P1XF6Dyj45QqzlsFN-ZlcD97QiGibJ1BmcJQMQoA"
+	);
+
+	const authToken = context.req.cookies.authToken;
 
 	try {
-		const product = await useFetchProductDetail(slug);
-		return { props: { product } };
+		const product = await useFetchProductDetail(slug, authToken as string);
+
+		return { props: { product: product.data } };
 	} catch (error) {
 		return { props: { error: (error as Error).message } };
 	}
@@ -31,7 +38,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, error }) => {
 		return <p>Product not found</p>;
 	}
 
-	const { product_slug, category_name, description, name, price, seller_name, type } = product;
+	const { product_slug, category_name, description, name, price, seller_name, type, location_city } = product;
 
 	return (
 		<div className="mx-4 md:container">
@@ -48,6 +55,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, error }) => {
 					description={description}
 					type={type}
 					productSlug={product_slug}
+					locationCity={location_city}
 				/>
 			</div>
 		</div>
