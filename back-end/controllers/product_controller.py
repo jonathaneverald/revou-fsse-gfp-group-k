@@ -7,6 +7,7 @@ from models.users import UserModel
 from models.category import CategoryModel
 from models.sellers import SellerModel
 from models.locations import LocationModel
+from models.cart import CartModel
 from sqlalchemy.orm import sessionmaker
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from cerberus import Validator
@@ -447,6 +448,7 @@ def show_all_product():
 @cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def show_product_by_slug(slug):
+    user_id = get_jwt_identity()
     try:
         product_result = (
             ProductModel.query.join(
@@ -488,6 +490,18 @@ def show_product_by_slug(slug):
             "category_slug": category_slug,
             "location_city": location_city,
         }
+
+        # Check if the product is in the current user's cart
+        cart_item = CartModel.query.filter_by(
+            user_id=user_id, product_id=product.id
+        ).first()
+
+        # If the product is in the cart, add cart details to the response
+        if cart_item:
+            product_detail["cart"] = {
+                "cart_id": cart_item.id,
+                "quantity": cart_item.quantity,
+            }
 
         return ResponseHandler.success(data=product_detail, status=200)
 
