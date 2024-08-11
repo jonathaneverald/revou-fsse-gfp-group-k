@@ -13,6 +13,7 @@ from controllers.category_controller import category_blueprint
 from controllers.seller_controller import seller_blueprint
 from controllers.product_controller import product_blueprint
 from controllers.cart_controller import cart_blueprint
+from controllers.voucher_controller import voucher_blueprint
 
 from flask_cors import CORS
 
@@ -55,6 +56,7 @@ def register_blueprints(app):
     app.register_blueprint(seller_blueprint)
     app.register_blueprint(product_blueprint)
     app.register_blueprint(cart_blueprint)
+    app.register_blueprint(voucher_blueprint)
 
 
 def init_login_manager(app):
