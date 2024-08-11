@@ -5,6 +5,7 @@ import { Search, ShoppingCart } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import ProfileDropdown from "../menu/ProfileDropdown";
+import SearchForm from "../form/SearchForm";
 
 const Header: React.FC = () => {
 	return (
@@ -23,16 +24,7 @@ const Header: React.FC = () => {
 			</nav>
 
 			<div className="flex w-full items-center gap-2 md:ml-auto ">
-				<form className="ml-auto flex-1 sm:flex-initial">
-					<div className="relative">
-						<Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-						<Input
-							type="search"
-							placeholder="Search products..."
-							className="pl-8 rounded-full focus:outline-none sm:w-[300px] md:w-[200px] lg:w-[300px]"
-						/>
-					</div>
-				</form>
+				<SearchForm />
 				<Link href={"/carts"}>
 					<Button variant="outline" size="icon" className="rounded-full">
 						<ShoppingCart className="h-4 w-4" />

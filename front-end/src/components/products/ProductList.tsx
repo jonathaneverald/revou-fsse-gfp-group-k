@@ -16,7 +16,7 @@ import {
 
 const ProductList = () => {
 	const router = useRouter();
-	const { category, location, q, page = 1, per_page = 12 } = router.query;
+	const { category, location, product_name, page = 1, per_page = 12 } = router.query;
 
 	const [currentPage, setCurrentPage] = useState<number>(Number(page));
 
@@ -25,7 +25,7 @@ const ProductList = () => {
 		per_page: Number(per_page),
 		category: category as string,
 		location: location as string,
-		q: q as string,
+		product_name: product_name as string,
 	});
 
 	useEffect(() => {

@@ -8,7 +8,7 @@ const ProductHeader: React.FC<ProductHeaderProps> = ({ name, category, type, sel
 			<Link href={`/products?category=${category}`}>
 				<Badge className="capitalize">{category}</Badge>
 			</Link>
-			<Link href={`/products?city=${locationCity}`}>
+			<Link href={`/products?location=${locationCity}`}>
 				<Badge className="capitalize">{locationCity}</Badge>
 			</Link>
 

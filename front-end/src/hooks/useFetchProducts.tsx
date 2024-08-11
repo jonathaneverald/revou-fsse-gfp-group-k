@@ -15,20 +15,20 @@ const useFetchProducts = ({
 	per_page,
 	category = "",
 	location = "",
-	q = "",
+	product_name = "",
 }: {
 	page: number;
 	per_page: number;
 	category?: string;
 	location?: string;
-	q?: string;
+	product_name?: string;
 }) => {
 	const params = new URLSearchParams({
 		page: page.toString(),
 		per_page: per_page.toString(),
 		category,
 		location,
-		q,
+		product_name,
 	}).toString();
 
 	const url = `http://127.0.0.1:5000/product?${params}`;
