@@ -11,14 +11,12 @@ class TransactionModel(db.Model):
 
     id = mapped_column(Integer, primary_key=True)
     user_id = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
-    seller_id = mapped_column(Integer, ForeignKey("sellers.id"), nullable=False)
     total_price = mapped_column(Numeric(10, 2))
     status = mapped_column(String(255), nullable=False)
     created_at = mapped_column(DateTime, default=datetime.now)
     updated_at = mapped_column(DateTime, default=datetime.now, onupdate=datetime.now)
 
     users = relationship("UserModel", back_populates="transactions")
-    sellers = relationship("SellerModel", back_populates="transactions")
     details = relationship("TransactionDetailModel", back_populates="transaction")
     transaction_vouchers = relationship(
         "TransactionVoucherModel", back_populates="transactions"
