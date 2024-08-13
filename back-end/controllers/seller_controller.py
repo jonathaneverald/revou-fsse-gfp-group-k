@@ -3,6 +3,7 @@ from connector.mysql_connector import connection
 from models.sellers import SellerModel
 from models.users import UserModel
 from models.locations import LocationModel
+from models.products import ProductModel
 from sqlalchemy.orm import sessionmaker
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_login import current_user
@@ -271,6 +272,23 @@ def show_seller_detail(slug):
 
         seller, city = seller_result
 
+        products = s.query(ProductModel).filter_by(seller_id=seller.id).all()
+
+        # Prepare product details
+        product_details = [
+            {
+                "id": product.id,
+                "name": product.name,
+                "price": product.price,
+                "quantity": product.quantity,
+                "description": product.description,
+                "type": product.type,
+                "category_id": product.category_id,
+                "slug": product.slug,
+            }
+            for product in products
+        ]
+
         seller_detail = {
             "id": seller.id,
             "user_id": seller.user_id,
@@ -278,6 +296,7 @@ def show_seller_detail(slug):
             "slug": seller.slug,
             "name": seller.name,
             "city": city,
+            "products": product_details,
         }
 
         return ResponseHandler.success(data=seller_detail, status=200)

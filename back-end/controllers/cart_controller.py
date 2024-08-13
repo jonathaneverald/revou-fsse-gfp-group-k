@@ -6,6 +6,7 @@ from models.products import ProductModel
 from models.users import UserModel
 from models.sellers import SellerModel
 from models.category import CategoryModel
+from models.voucher import VoucherModel
 from sqlalchemy.orm import sessionmaker
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from cerberus import Validator
@@ -16,7 +17,7 @@ cart_blueprint = Blueprint("cart_blueprint", __name__)
 
 
 @cart_blueprint.post("/cart")
-@cross_origin(origin='localhost', headers=['Content-Type','Authorization'])
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def add_cart():
     user_id = get_jwt_identity()
@@ -90,7 +91,7 @@ def add_cart():
 
 
 @cart_blueprint.put("/cart/<int:cart_id>")
-@cross_origin(origin='localhost', headers=['Content-Type','Authorization'])
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def update_cart(cart_id):
     user_id = get_jwt_identity()
@@ -235,3 +236,62 @@ def delete_cart(cart_id):
 
     finally:
         s.close()
+
+
+@cart_blueprint.get("/cart/vouchers/")
+@jwt_required()
+def show_cart_voucher():
+    user_id = get_jwt_identity()
+    Session = sessionmaker(connection)
+    s = Session()
+    s.begin()
+
+    try:
+        current_user = UserModel.query.filter_by(id=user_id).first()
+        if not current_user:
+            return ResponseHandler.error(message="User not found", status=404)
+
+        # Retrieve the cart items and ensure it belongs to the current user
+        cart_items = (
+            VoucherModel.query.join(
+                SellerModel, VoucherModel.seller_id == SellerModel.id
+            )
+            .join(ProductModel, SellerModel.id == ProductModel.seller_id)
+            .join(CartModel, ProductModel.id == CartModel.product_id)
+            # Return specify columns
+            .with_entities(
+                VoucherModel.id.label("voucher_id"),
+                VoucherModel.name.label("voucher_name"),
+                VoucherModel.discount,
+                SellerModel.id.label("seller_id"),
+                SellerModel.name.label("seller_name"),
+            )
+            .filter(CartModel.user_id == user_id)
+            .distinct(VoucherModel.id)  # to return unique vouchers, not duplicate
+            .all()
+        )
+
+        if not cart_items:
+            return ResponseHandler.error(
+                message="No vouchers available for products in the cart.", status=404
+            )
+
+        voucher_lists = [
+            {
+                "voucher_id": voucher_id,
+                "seller_id": seller_id,
+                "seller_name": seller_name,
+                "voucher_name": voucher_name,
+                "discount": discount,
+            }
+            for voucher_id, seller_id, seller_name, voucher_name, discount in cart_items
+        ]
+
+        return ResponseHandler.success(data=voucher_lists, status=200)
+
+    except Exception as e:
+        return ResponseHandler.error(
+            message="An error occurred while showing the vouchers",
+            data=str(e),
+            status=500,
+        )
