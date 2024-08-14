@@ -83,9 +83,9 @@ def add_seller():
 
 
 # Profile seller for user's role seller
-@seller_blueprint.get("/seller-profile/<slug>")
+@seller_blueprint.get("/seller-profile")
 @jwt_required()
-def seller_profile(slug):
+def seller_profile():
     user_id = get_jwt_identity()
     Session = sessionmaker(connection)
     s = Session()
@@ -100,7 +100,7 @@ def seller_profile(slug):
             return ResponseHandler.error(message="Unauthorized access", status=403)
 
         # Fetch the seller using the slug
-        seller = s.query(SellerModel).filter_by(slug=slug).first()
+        seller = s.query(SellerModel).filter_by(user_id=user_id).first()
         if not seller:
             return ResponseHandler.error(message="Seller not found", status=404)
 
