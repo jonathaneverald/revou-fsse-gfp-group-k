@@ -4,6 +4,7 @@ export interface User {
 	email: string;
 	address: string;
 	phone_number: string;
+	role: string;
 }
 
 export interface EditProfileProps {

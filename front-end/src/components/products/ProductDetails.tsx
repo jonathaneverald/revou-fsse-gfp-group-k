@@ -1,7 +1,5 @@
 import { formatIntToIDR } from "@/utils/currency";
-import { Button } from "../ui/button";
 import { ProductDetailsProps } from "@/types/product";
-import { useAddToCart } from "@/hooks/useAddToCart";
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({ price, description }) => {
 	return (

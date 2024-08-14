@@ -14,7 +14,7 @@ const ProductHeader: React.FC<ProductHeaderProps> = ({ name, category, type, sel
 
 			<Badge className="capitalize">{type}</Badge>
 		</div>
-		<Link href="/seller/furniture-shop">
+		<Link href="/stores/furniture-shop">
 			<h2 className="font-semibold text-sm hover:underline capitalize">{seller}</h2>
 		</Link>
 		<h2 className="text-2xl text-gray-950 capitalize font-semibold">{name}</h2>

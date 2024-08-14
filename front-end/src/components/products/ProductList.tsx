@@ -78,7 +78,7 @@ const ProductList = () => {
 					/>
 				))}
 			</div>
-			<div className="mt-10">
+			<div className="mt-5">
 				<Pagination>
 					<PaginationContent>
 						<PaginationItem>

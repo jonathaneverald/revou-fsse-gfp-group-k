@@ -5,7 +5,7 @@ import Image from "next/image";
 
 const Footer = () => {
 	return (
-		<Card className="w-full rounded-none border-t">
+		<Card className="w-full z-50 rounded-none border-t">
 			<CardContent className="p-8">
 				<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 					<div>

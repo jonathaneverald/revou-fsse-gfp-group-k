@@ -34,13 +34,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
 			</div>
 			<div className="p-4 space-y-2">
 				<Link href={`/products/${product_slug}`}>
-					<h3 className="text-sm md:text-sm font-semibold">{name}</h3>
+					<h3 className="text-sm md:text-sm tracking-wide font-semibold">{name}</h3>
 				</Link>
 				<div className="flex items-center">
 					<Store className="size-4" />
 					<Link
-						href={`/seller/${seller_slug}`}
-						className="ml-[2px] capitalize text-[13px] line-clamp-2 text-gray-700"
+						href={`/stores/${seller_slug}`}
+						className="ml-[2px] tracking-wider capitalize text-[13px] line-clamp-2 text-gray-700"
 					>
 						{seller_name}
 					</Link>

@@ -11,6 +11,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export const useFetchCities = () => {
 	const { data, error } = useSWR<ApiResponse, Error>("http://127.0.0.1:5000/location", fetcher);
+	console.log(data);
 
 	const cities = data && data.message === "Success" ? data.data.map((city: City) => city) : [];
 

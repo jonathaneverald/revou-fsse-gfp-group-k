@@ -23,7 +23,7 @@ const ProfileDropdown: React.FC = () => {
 	}
 
 	if (error) {
-		return <div>Error: {error.message}</div>;
+		return <div>Error: {error}</div>;
 	}
 
 	return (
@@ -31,7 +31,7 @@ const ProfileDropdown: React.FC = () => {
 			<EditProfile isOpen={isOpen} setIsOpen={setIsOpen} user={user} />
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild>
-					<Avatar className="cursor-pointer">
+					<Avatar className="cursor-pointer border">
 						<AvatarFallback>{user?.email?.slice(0, 2).toUpperCase() || "U"}</AvatarFallback>
 					</Avatar>
 				</DropdownMenuTrigger>
