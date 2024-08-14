@@ -1,8 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
-import { Home, ListFilter, MoreHorizontal, Package, PanelLeft, PlusCircle, Search, ShoppingCart } from "lucide-react";
+import {
+	Home,
+	ListFilter,
+	MoreHorizontal,
+	Package,
+	PanelLeft,
+	Pencil,
+	PlusCircle,
+	Search,
+	ShoppingCart,
+	SquarePen,
+	Trash,
+} from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -22,6 +34,14 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatIntToIDR } from "@/utils/currency";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 
 const DynamicBreadcrumb = dynamic(
 	() => import("@/components/menu/DynamicBreadcrumb").then((mod) => mod.DynamicBreadcrumb),
@@ -122,6 +142,20 @@ const products = [
 ];
 
 const StoreProducts = () => {
+	const [openDialog, setOpenDialog] = useState(false);
+	const [productToDelete, setProductToDelete] = useState<string | null>(null);
+
+	const handleDelete = (productName: string) => {
+		setProductToDelete(productName);
+		setOpenDialog(true);
+	};
+
+	const confirmDelete = () => {
+		// Perform delete operation here, e.g., API call
+		console.log(`Product deleted: ${productToDelete}`);
+		setOpenDialog(false);
+	};
+
 	return (
 		<>
 			<header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
@@ -301,8 +335,17 @@ const StoreProducts = () => {
 															</DropdownMenuTrigger>
 															<DropdownMenuContent align="end">
 																<DropdownMenuLabel>Actions</DropdownMenuLabel>
-																<DropdownMenuItem>Edit</DropdownMenuItem>
-																<DropdownMenuItem>Delete</DropdownMenuItem>
+																<DropdownMenuItem className="flex justify-between items-center">
+																	Edit
+																	<SquarePen className="size-4" />
+																</DropdownMenuItem>
+																<DropdownMenuItem
+																	className="flex justify-between items-center"
+																	onClick={() => handleDelete(product.name)}
+																>
+																	Delete
+																	<Trash className="size-4" />
+																</DropdownMenuItem>
 															</DropdownMenuContent>
 														</DropdownMenu>
 													</TableCell>
@@ -321,6 +364,25 @@ const StoreProducts = () => {
 					</div>
 				</div>
 			</div>
+			<Dialog open={openDialog} onOpenChange={setOpenDialog}>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Confirm Deletion</DialogTitle>
+						<DialogDescription>
+							Are you sure you want to delete the product <strong>{productToDelete}</strong>? This action
+							cannot be undone.
+						</DialogDescription>
+					</DialogHeader>
+					<DialogFooter>
+						<Button variant="outline" onClick={() => setOpenDialog(false)}>
+							Cancel
+						</Button>
+						<Button variant="destructive" onClick={confirmDelete}>
+							Delete
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 		</>
 	);
 };

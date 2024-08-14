@@ -36,7 +36,7 @@ export function DynamicBreadcrumb() {
 									<BreadcrumbPage>{segment}</BreadcrumbPage>
 								) : (
 									<BreadcrumbLink>
-										<Link className="text-primary" href={href}>
+										<Link className="text-primary hover:underline" href={href}>
 											{segment}
 										</Link>
 									</BreadcrumbLink>
