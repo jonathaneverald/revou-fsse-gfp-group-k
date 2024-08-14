@@ -4,6 +4,7 @@ from models.sellers import SellerModel
 from models.users import UserModel
 from models.locations import LocationModel
 from models.products import ProductModel
+from models.product_images import ProductImageModel
 from sqlalchemy.orm import sessionmaker
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_login import current_user
@@ -311,3 +312,61 @@ def show_seller_detail(slug):
 
     finally:
         s.close()
+
+
+# Show all products belongs to the current seller that logged in
+@seller_blueprint.get("/seller/products")
+@jwt_required()
+def show_seller_products():
+    user_id = get_jwt_identity()
+
+    try:
+
+        current_user = UserModel.query.filter_by(id=user_id).first()
+        if not current_user:
+            return ResponseHandler.error(message="User not found", status=404)
+
+        # Check if the current user's role is "seller"
+        if current_user.role != "seller":
+            return ResponseHandler.error(message="Unauthorized access", status=403)
+
+        # Fetch the seller associated with the current user
+        seller = SellerModel.query.filter_by(user_id=user_id).first()
+        if not seller:
+            return ResponseHandler.error(message="Seller not found", status=404)
+
+        # Get all products belongs to current seller
+        products = ProductModel.query.filter_by(seller_id=seller.id).all()
+
+        # Prepare product data
+        product_data = []
+        for product in products:
+            # Fetch product images
+            images = ProductImageModel.query.filter_by(product_id=product.id).all()
+            image_urls = [image.image_url for image in images]
+
+            # Set images to null if no images are available
+            images_field = image_urls if image_urls else None
+
+            product_data.append(
+                {
+                    "id": product.id,
+                    "name": product.name,
+                    "images": images_field,
+                    "price": product.price,
+                    "quantity": product.quantity,
+                    "type": product.type,
+                    "slug": product.slug,
+                }
+            )
+
+        return ResponseHandler.success(
+            message="Seller products fetched successfully", data=product_data
+        )
+
+    except Exception as e:
+        return ResponseHandler.error(
+            message="An error occurred while fetching the products",
+            data=str(e),
+            status=500,
+        )
