@@ -1,10 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card";
 import { formatIntToIDR } from "@/utils/currency";
 import { Button } from "../ui/button";
 import { CartSummaryProps } from "@/types/cart";
+import { useTransactionPost } from "@/hooks/useCreateTransaction";
+import { RotateCcw } from "lucide-react";
 
 const CartSummary: React.FC<CartSummaryProps> = ({ calculateStoreSubtotals, calculateTotal, vouchers }) => {
+	const { postTransaction } = useTransactionPost();
+	const [loading, setLoading] = useState(false);
+
+	const handleSubmit = async () => {
+		setLoading(true);
+		try {
+			const newTransaction = await postTransaction();
+		} catch (error) {
+			console.error("Error posting transaction:", error);
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	return (
 		<Card>
 			<CardHeader className="p-4">
@@ -38,8 +54,17 @@ const CartSummary: React.FC<CartSummaryProps> = ({ calculateStoreSubtotals, calc
 					</div>
 				</div>
 			</CardContent>
-			<CardFooter>
-				<Button className="w-full">Proceed to Checkout</Button>
+			<CardFooter className="px-4">
+				<Button className="w-full" onClick={handleSubmit}>
+					{!loading ? (
+						"Proceed to Checkout"
+					) : (
+						<>
+							<RotateCcw className="mr-2 h-4 w-4 animate-spin" />
+							Please wait
+						</>
+					)}
+				</Button>
 			</CardFooter>
 		</Card>
 	);
