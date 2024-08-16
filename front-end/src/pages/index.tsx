@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import { ArrowDownRight, ChevronRight, MoveUpRight } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, ChevronRight, MoveUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -75,7 +75,7 @@ export default function Home() {
 									size={"icon"}
 									className="rounded-full border border-black h-10 md:h-12 w-10 md:w-12 bg-white group-hover:bg-black"
 								>
-									<ChevronRight className="text-black group-hover:text-white -rotate-45" />
+									<ArrowUpRight className="text-black group-hover:text-white" />
 								</Button>
 							</Link>
 						</div>
