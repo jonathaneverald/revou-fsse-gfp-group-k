@@ -20,6 +20,7 @@ transaction_blueprint = Blueprint("transaction_blueprint", __name__)
 
 
 @transaction_blueprint.post("/transaction")
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def add_transaction():
     user_id = get_jwt_identity()
