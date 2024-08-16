@@ -22,7 +22,7 @@ const CartSummary: React.FC<CartSummaryProps> = ({ calculateStoreSubtotals, calc
 	};
 
 	return (
-		<Card>
+		<Card className="mb-4">
 			<CardHeader className="p-4">
 				<CardTitle>Shopping summary</CardTitle>
 			</CardHeader>

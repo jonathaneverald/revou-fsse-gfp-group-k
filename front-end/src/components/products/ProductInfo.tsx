@@ -24,7 +24,7 @@ const ProductInfo: React.FC<ProductInfoProps> = ({
 	};
 
 	return (
-		<div className="flex w-full md:w-3/4 flex-col space-y-5">
+		<div className="flex w-full md:w-full lg:w-3/4 flex-col space-y-5">
 			<ProductHeader
 				name={name}
 				category={category}

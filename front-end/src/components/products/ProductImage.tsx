@@ -20,8 +20,8 @@ const ProductImage: React.FC<ProductImagesProps> = ({ images }) => (
 					</CarouselItem>
 				))}
 			</CarouselContent>
-			<CarouselPrevious />
-			<CarouselNext />
+			<CarouselPrevious className="left-3" />
+			<CarouselNext className="right-3" />
 		</Carousel>
 	</div>
 );

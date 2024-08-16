@@ -15,7 +15,7 @@ const useUserProfile = () => {
 		try {
 			if (!getToken()) {
 				setToken(
-					"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcyMzc0MjQ2NSwianRpIjoiNmQzMzNmMjktMDM4Yy00MDIyLTg5ZjctMzY2NDk4Y2E0NDUxIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNzIzNzQyNDY1LCJjc3JmIjoiOGEzNmUzODQtODdjNS00NmJlLWE2NjItNzNlNTkwYTRlY2JiIiwiZXhwIjoxNzIzODI4ODY1fQ.WxitKHQVXtTnjEWC9hntfKRttp7ZLSkJJsuXQ61gWts"
+					"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcyMzgxNjMxOSwianRpIjoiMTZmODM5MTAtNjJlNy00MWFmLWE5YjctYzg2OWQ5YWMxMTE0IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNzIzODE2MzE5LCJjc3JmIjoiYTI2MTg1NjMtZDdjZC00Y2JiLTg2NGItMzczYThmOTdjM2VlIiwiZXhwIjoxNzIzOTAyNzE5fQ.zoW704iHhMud1HwooYWVp6o-BzIP4-uFlZzzMHnIJuU"
 				);
 			}
 
