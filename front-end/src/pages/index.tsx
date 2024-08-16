@@ -67,13 +67,13 @@ export default function Home() {
 					</Carousel>
 				</div>
 				<div className="flex items-center">
-					<Card className="border border-black h-full w-full md:p-10 p-4 flex items-center md:items-start justify-between flex-row md:justify-center md:flex-col">
-						<h3 className="text-2xl md:text-3xl">Discovery all new items</h3>
+					<Card className="border border-black h-full w-full md:p-10 p-2 flex items-center md:items-start justify-between flex-row md:justify-end md:flex-col">
+						<h3 className="text-xl md:text-3xl">Discovery all new items</h3>
 						<div className="group md:mt-5">
 							<Link href={"/products"}>
 								<Button
 									size={"icon"}
-									className="rounded-full border border-black h-10 md:h-12 w-10 md:w-12 bg-white group-hover:bg-black"
+									className="rounded-full border border-black h-8 md:h-12 w-8 md:w-12 bg-white group-hover:bg-black"
 								>
 									<ArrowUpRight className="text-black group-hover:text-white" />
 								</Button>
