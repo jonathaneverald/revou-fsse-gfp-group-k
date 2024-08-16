@@ -13,12 +13,8 @@ const DynamicBreadcrumb = dynamic(
 
 export const getServerSideProps: GetServerSideProps<ProductDetailProps> = async (context) => {
 	const slug = context.query.slug as string;
-	context.res.setHeader(
-		"Set-Cookie",
-		"authToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcyMzcxMDU2NiwianRpIjoiMDUzM2ZkODUtMzZmNi00MjVkLWEwNzAtZmU1ZmM1MjEwNmI2IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNzIzNzEwNTY2LCJjc3JmIjoiYjhlZDg2MTMtZmNiYS00MDM0LTg5OTUtZGVhYzk5ZjliYzIwIiwiZXhwIjoxNzIzNzk2OTY2fQ.ChDMwHZnE5mZaHFwTY86K4642h0Qw5qYL8aFnx-8dyw"
-	);
 
-	const authToken = context.req.cookies.authToken;
+	const authToken = context.req.cookies.jwtToken;
 
 	try {
 		const product = await useFetchProductDetail(slug, authToken as string);
