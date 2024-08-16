@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
@@ -8,9 +8,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { StoreProfileProps } from "@/types/store";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { ArrowUpDown, CheckIcon, ChevronsUpDown } from "lucide-react";
+import { CheckIcon, ChevronsUpDown } from "lucide-react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
 import { cn } from "@/lib/utils";
+import useSellerProfile from "@/hooks/useSellerProfile";
+import { useAppSelector } from "@/hooks/reduxHooks";
 
 const formSchema = z.object({
 	name: z.string().min(2, {
@@ -25,15 +27,34 @@ const formSchema = z.object({
 		}),
 });
 
-const StoreForm: React.FC<StoreProfileProps> = ({ isOpen, setIsOpen, seller, cities }) => {
+const StoreForm: React.FC<StoreProfileProps> = ({ isOpen, setIsOpen, cities }) => {
 	const [open, setOpen] = useState(false);
+	const { data: sellerProfile } = useAppSelector((state) => state.sellerProfile);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
+		defaultValues: {
+			name: sellerProfile?.name || "",
+			location_id: sellerProfile?.location_id || 0,
+		},
 	});
 
+	useEffect(() => {
+		if (sellerProfile) {
+			form.reset({
+				name: sellerProfile.name,
+				location_id: sellerProfile.location_id,
+			});
+		}
+	}, [sellerProfile, form]);
+
 	function onSubmit(values: z.infer<typeof formSchema>) {
-		console.log(values);
+		if (sellerProfile) {
+			console.log("Updating store:", values);
+		} else {
+			console.log("Creating store:", values);
+		}
+		// Perform the update or create action here.
 		// form.reset();
 		// setIsOpen(false);
 	}
@@ -42,9 +63,11 @@ const StoreForm: React.FC<StoreProfileProps> = ({ isOpen, setIsOpen, seller, cit
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogContent className="sm:max-w-[425px]">
 				<DialogHeader>
-					<DialogTitle>Create New Store</DialogTitle>
+					<DialogTitle>{sellerProfile ? "Update Store" : "Create New Store"}</DialogTitle>
 					<DialogDescription>
-						Fill in the details below to create a new store. Click save when you're done.
+						{sellerProfile
+							? "Update the details below to edit the store. Click save when you're done."
+							: "Fill in the details below to create a new store. Click save when you're done."}
 					</DialogDescription>
 				</DialogHeader>
 				<Form {...form}>
@@ -120,7 +143,7 @@ const StoreForm: React.FC<StoreProfileProps> = ({ isOpen, setIsOpen, seller, cit
 						/>
 
 						<DialogFooter>
-							<Button type="submit">Create</Button>
+							<Button type="submit">{sellerProfile ? "Update" : "Create"}</Button>
 						</DialogFooter>
 					</form>
 				</Form>

@@ -12,30 +12,28 @@ const Footer = () => {
 						<Image
 							className="mb-5"
 							alt="brand logo"
-							src={
-								"https://pickbazar-react-rest.vercel.app/_next/image?url=https%3A%2F%2Fpickbazarlaravel.s3.ap-southeast-1.amazonaws.com%2F2295%2FLogo-new.png&w=2048&q=75"
-							}
+							src={"https://themesflat.co/html/ecomus/images/logo/logo.svg"}
 							width={200}
 							height={50}
 						/>
-						<p className="text-sm mb-2">NY State Thruway, New York, USA</p>
-						<p className="text-sm mb-2">demo@demo.com</p>
-						<p className="text-sm mb-5">+129290122122</p>
+						<p className="text-sm tracking-wide mb-2">Address: 1234 Fashion Street, Suite 567,</p>
+						<p className="text-sm tracking-wide mb-2">demo@demo.com</p>
+						<p className="text-sm tracking-wide mb-5">+129290122122</p>
 					</div>
 
 					<div>
 						<h3 className="text-lg font-semibold mb-4">Explore</h3>
 						<ul className="space-y-2">
-							<li className="text-sm">
+							<li className="text-sm tracking-wide">
 								<a href="#">Shops</a>
 							</li>
-							<li className="text-sm">
+							<li className="text-sm tracking-wide">
 								<a href="#">Authors</a>
 							</li>
-							<li className="text-sm">
+							<li className="text-sm tracking-wide">
 								<a href="#">Flash Deals</a>
 							</li>
-							<li className="text-sm">
+							<li className="text-sm tracking-wide">
 								<a href="#">Coupon</a>
 							</li>
 						</ul>
@@ -44,13 +42,13 @@ const Footer = () => {
 					<div>
 						<h3 className="text-lg font-semibold mb-4">Customer Service</h3>
 						<ul className="space-y-2">
-							<li className="text-sm">
+							<li className="text-sm tracking-wide">
 								<a href="#">FAQ & Helps</a>
 							</li>
-							<li className="text-sm">
+							<li className="text-sm tracking-wide">
 								<a href="#">Vendor Refund Policies</a>
 							</li>
-							<li className="text-sm">
+							<li className="text-sm tracking-wide">
 								<a href="#">Customer Refund Policies</a>
 							</li>
 						</ul>
@@ -59,16 +57,16 @@ const Footer = () => {
 					<div>
 						<h3 className="text-lg font-semibold mb-4">Our Information</h3>
 						<ul className="space-y-2">
-							<li className="text-sm">
+							<li className="text-sm tracking-wide">
 								<a href="#">Manufacturers</a>
 							</li>
-							<li className="text-sm">
+							<li className="text-sm tracking-wide">
 								<a href="#">Privacy policies</a>
 							</li>
-							<li className="text-sm">
+							<li className="text-sm tracking-wide">
 								<a href="#">Terms & conditions</a>
 							</li>
-							<li className="text-sm">
+							<li className="text-sm tracking-wide">
 								<a href="#">Contact Us</a>
 							</li>
 						</ul>
@@ -77,7 +75,7 @@ const Footer = () => {
 
 				<Separator className="my-8" />
 
-				<div className="text-center text-sm text-gray-500">
+				<div className="text-center text-sm tracking-wide text-gray-500">
 					©2024 Pickbazar. Copyright © REDQ. All rights reserved worldwide. REDQ
 				</div>
 			</CardContent>

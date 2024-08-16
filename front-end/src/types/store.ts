@@ -1,4 +1,5 @@
 import { City } from "./city";
+import { SellerProfile } from "./seller";
 
 export interface Seller {
 	location_id: number;
@@ -8,6 +9,5 @@ export interface Seller {
 export interface StoreProfileProps {
 	isOpen: boolean;
 	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-	seller: Seller | undefined;
 	cities: City[];
 }

@@ -32,15 +32,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
 					{type}
 				</Badge>
 			</div>
-			<div className="p-4 space-y-2">
+			<div className="p-3 space-y-1">
 				<Link href={`/products/${product_slug}`}>
 					<h3 className="text-sm md:text-sm tracking-wide font-semibold">{name}</h3>
 				</Link>
 				<div className="flex items-center">
-					<Store className="size-4" />
+					<Store className="size-3" />
 					<Link
 						href={`/stores/${seller_slug}`}
-						className="ml-[2px] tracking-wider capitalize text-[13px] line-clamp-2 text-gray-700"
+						className="ml-[2px] tracking-wider capitalize text-xs line-clamp-2 text-gray-700"
 					>
 						{seller_name}
 					</Link>

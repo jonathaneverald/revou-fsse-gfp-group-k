@@ -56,7 +56,7 @@ const SearchForm: React.FC = () => {
 					value={searchTerm}
 					onChange={handleSearchChange}
 					placeholder="Search products..."
-					className="pl-8 rounded-full focus:outline-none sm:w-[300px] md:w-[200px] lg:w-[300px]"
+					className="pl-8 focus:outline-none sm:w-[300px] md:w-[200px] lg:w-[300px]"
 					disabled={isLoading}
 				/>
 				{isLoading && <Loader className="animate-spin absolute right-2.5 top-3 h-4 w-4 " />}

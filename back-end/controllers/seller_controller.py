@@ -1,4 +1,5 @@
 from flask import Blueprint, request
+from flask_cors import cross_origin
 from connector.mysql_connector import connection
 from models.sellers import SellerModel
 from models.users import UserModel
@@ -85,14 +86,13 @@ def add_seller():
 
 # Profile seller for user's role seller
 @seller_blueprint.get("/seller-profile")
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def seller_profile():
     user_id = get_jwt_identity()
-    Session = sessionmaker(connection)
-    s = Session()
 
     try:
-        current_user = s.query(UserModel).filter_by(id=user_id).first()
+        current_user = UserModel.query.filter_by(id=user_id).first()
         if not current_user:
             return ResponseHandler.error(message="User not found", status=404)
 
@@ -101,7 +101,7 @@ def seller_profile():
             return ResponseHandler.error(message="Unauthorized access", status=403)
 
         # Fetch the seller using the slug
-        seller = s.query(SellerModel).filter_by(user_id=user_id).first()
+        seller = SellerModel.query.filter_by(user_id=user_id).first()
         if not seller:
             return ResponseHandler.error(message="Seller not found", status=404)
 
@@ -110,7 +110,7 @@ def seller_profile():
             return ResponseHandler.error(message="Unauthorized access", status=403)
 
         # Fetch the city location
-        location = s.query(LocationModel).filter_by(id=seller.location_id).first()
+        location = LocationModel.query.filter_by(id=seller.location_id).first()
 
         data = {
             "id": seller.id,
@@ -125,17 +125,12 @@ def seller_profile():
         )
 
     except Exception as e:
-        s.rollback()
         return ResponseHandler.error(
             message="An error occurred while fetching the seller profile",
             data=str(e),
             status=500,
         )
-
-    finally:
-        s.close()
-
-
+ 
 @seller_blueprint.put("/seller-profile/<int:seller_id>")
 @jwt_required()
 def update_seller_profile(seller_id):
@@ -316,6 +311,7 @@ def show_seller_detail(slug):
 
 # Show all products belongs to the current seller that logged in
 @seller_blueprint.get("/seller/products")
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def show_seller_products():
     user_id = get_jwt_identity()

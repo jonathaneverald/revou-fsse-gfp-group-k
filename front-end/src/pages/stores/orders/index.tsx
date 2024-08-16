@@ -1,10 +1,10 @@
-import React from "react";
-import ProductTable from "@/components/products/ProductTable";
-import { useSellerProducts } from "@/hooks/useSellerProducts";
 import ProductActions from "@/components/products/ProductActions";
+import ProductTable from "@/components/products/ProductTable";
 import StoreLayout from "@/components/StoreLayout";
+import { useSellerProducts } from "@/hooks/useSellerProducts";
+import React from "react";
 
-const StoreProducts: React.FC = () => {
+const index = () => {
 	const { products } = useSellerProducts();
 
 	return (
@@ -19,4 +19,4 @@ const StoreProducts: React.FC = () => {
 	);
 };
 
-export default StoreProducts;
+export default index;

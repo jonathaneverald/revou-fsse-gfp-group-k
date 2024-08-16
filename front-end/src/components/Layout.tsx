@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils";
 import React from "react";
 import Header from "./layouts/Header";
-import Sidebar from "./layouts/Sidebar";
 import Footer from "./layouts/Footer";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
