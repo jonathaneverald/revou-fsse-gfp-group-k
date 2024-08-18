@@ -6,11 +6,8 @@ import { Button } from "../ui/button";
 import ProfileDropdown from "../menu/ProfileDropdown";
 import SearchForm from "../form/SearchForm";
 import StoreNav from "../menu/StoreNav";
-import { useFetchCities } from "@/hooks/useFetchCities";
 
 const Header: React.FC = () => {
-	const { cities } = useFetchCities();
-
 	return (
 		<header className="sticky z-50 top-0 flex h-24 items-center gap-4 border-b bg-background px-4 md:px-6 shadow-sm">
 			<nav className="hidden flex-col gap-6 text-lg font-medium sm:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
@@ -32,7 +29,7 @@ const Header: React.FC = () => {
 					</Button>
 				</Link>
 
-				<StoreNav cities={cities} />
+				<StoreNav />
 
 				<ProfileDropdown />
 			</div>
