@@ -8,7 +8,7 @@ import { Skeleton } from "../ui/skeleton";
 import { City } from "@/types/city";
 import useSellerProfile from "@/hooks/useSellerProfile";
 
-const StoreNav = ({ cities }: { cities: City[] }) => {
+const StoreNav = () => {
 	const [isOpen, setIsOpen] = useState(false);
 	const { data: user } = useAppSelector((state) => state.user);
 	const { sellerProfile, isLoading, isError } = useSellerProfile();
@@ -30,7 +30,7 @@ const StoreNav = ({ cities }: { cities: City[] }) => {
 				<Store className="h-5 w-5 md:h-4 md:w-4" />
 				<span className="hidden md:inline ml-2">Store</span>
 			</Button>
-			{sellerProfile && <StoreForm isOpen={isOpen} setIsOpen={setIsOpen} cities={cities} />}
+			{sellerProfile && <StoreForm isOpen={isOpen} setIsOpen={setIsOpen} />}
 		</>
 	);
 
