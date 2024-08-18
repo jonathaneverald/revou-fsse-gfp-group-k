@@ -42,7 +42,7 @@ const StoreSideItems: React.FC<StoreItemsProps> = ({ sellerProfile, handleOpenSt
 					Orders
 				</div>
 				<Badge variant={"destructive"} className="text-[10px] flex justify-center items-center">
-					200
+					9
 				</Badge>
 			</Link>
 			<Link
@@ -53,9 +53,9 @@ const StoreSideItems: React.FC<StoreItemsProps> = ({ sellerProfile, handleOpenSt
 					<Package className="mr-2 size-[18px]" />
 					Products
 				</div>
-				<Badge variant={"destructive"} className="text-[10px] flex justify-center items-center">
+				{/* <Badge variant={"destructive"} className="text-[10px] flex justify-center items-center">
 					2
-				</Badge>
+				</Badge> */}
 			</Link>
 		</>
 	);
