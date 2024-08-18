@@ -11,33 +11,28 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { CheckIcon, ChevronsUpDown } from "lucide-react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
 import { cn } from "@/lib/utils";
-import useSellerProfile from "@/hooks/useSellerProfile";
 import { useAppSelector } from "@/hooks/reduxHooks";
+import { useCities } from "@/hooks/useCities";
+import { StoreFormSchema } from "@/schemas/StoreForm";
 
-const formSchema = z.object({
-	name: z.string().min(2, {
-		message: "Name must be at least 2 characters.",
-	}),
-	location_id: z
-		.number({
-			invalid_type_error: "Location is required and must be a number.",
-		})
-		.min(1, {
-			message: "A valid location must be selected.",
-		}),
-});
-
-const StoreForm: React.FC<StoreProfileProps> = ({ isOpen, setIsOpen, cities }) => {
+const StoreForm: React.FC<StoreProfileProps> = ({ isOpen, setIsOpen }) => {
 	const [open, setOpen] = useState(false);
 	const { data: sellerProfile } = useAppSelector((state) => state.sellerProfile);
+	const { cities, fetchCities } = useCities();
 
-	const form = useForm<z.infer<typeof formSchema>>({
-		resolver: zodResolver(formSchema),
+	const form = useForm({
+		resolver: zodResolver(StoreFormSchema),
 		defaultValues: {
 			name: sellerProfile?.name || "",
 			location_id: sellerProfile?.location_id || 0,
 		},
 	});
+
+	useEffect(() => {
+		if (isOpen) {
+			fetchCities();
+		}
+	}, [isOpen, fetchCities]);
 
 	useEffect(() => {
 		if (sellerProfile) {
@@ -48,16 +43,14 @@ const StoreForm: React.FC<StoreProfileProps> = ({ isOpen, setIsOpen, cities }) =
 		}
 	}, [sellerProfile, form]);
 
-	function onSubmit(values: z.infer<typeof formSchema>) {
+	const onSubmit = (values: z.infer<typeof StoreFormSchema>) => {
 		if (sellerProfile) {
 			console.log("Updating store:", values);
 		} else {
 			console.log("Creating store:", values);
 		}
 		// Perform the update or create action here.
-		// form.reset();
-		// setIsOpen(false);
-	}
+	};
 
 	return (
 		<Dialog open={isOpen} onOpenChange={setIsOpen}>
