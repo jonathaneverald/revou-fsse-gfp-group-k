@@ -4,12 +4,10 @@ import StoreHeader from "./layouts/StoreHeader";
 import StoreSidebar from "./sidebar/StoreSidebar";
 import StoreForm from "./form/StoreForm";
 import { useAppSelector } from "@/hooks/reduxHooks";
-import { useFetchCities } from "@/hooks/useFetchCities";
 
 const StoreLayout = ({ children }: { children: React.ReactNode }) => {
 	const { data: sellerProfile } = useAppSelector((state) => state.sellerProfile);
 	const [isOpen, setIsOpen] = useState<boolean>(false);
-	const { cities } = useFetchCities();
 
 	const handleOpenStoreForm = () => setIsOpen(true);
 
@@ -20,7 +18,7 @@ const StoreLayout = ({ children }: { children: React.ReactNode }) => {
 				<StoreSidebar sellerProfile={sellerProfile} handleOpenStoreForm={handleOpenStoreForm} />
 				<main className="col-span-3">{children}</main>
 			</div>
-			<StoreForm isOpen={isOpen} setIsOpen={setIsOpen} cities={cities} />
+			<StoreForm isOpen={isOpen} setIsOpen={setIsOpen} />
 		</div>
 	);
 };
