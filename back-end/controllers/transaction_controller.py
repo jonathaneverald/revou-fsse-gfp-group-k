@@ -357,6 +357,7 @@ def show_user_transactions():
 
 # Show all transactions for current seller that logged in
 @transaction_blueprint.get("/transaction-seller")
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def show_seller_transactions():
     user_id = get_jwt_identity()
