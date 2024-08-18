@@ -9,5 +9,4 @@ export interface Seller {
 export interface StoreProfileProps {
 	isOpen: boolean;
 	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-	cities: City[];
 }

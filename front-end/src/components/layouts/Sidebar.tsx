@@ -1,9 +1,4 @@
-import React, { useState } from "react";
-import { useRouter } from "next/router";
-import { Input } from "../ui/input";
-import { useFetchCities } from "@/hooks/useFetchCities";
-import { useFilteredCategories } from "@/hooks/useFilteredCategories";
-import { useFilteredCities } from "@/hooks/useFilteredCities";
+import React from "react";
 import Categories from "../sidebar/Categories";
 import Cities from "../sidebar/Cities";
 
