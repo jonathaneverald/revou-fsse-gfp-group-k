@@ -8,6 +8,7 @@ from models.category import CategoryModel
 from models.sellers import SellerModel
 from models.locations import LocationModel
 from models.cart import CartModel
+from models.product_images import ProductImageModel
 from sqlalchemy.orm import sessionmaker
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from cerberus import Validator
@@ -379,7 +380,11 @@ def show_all_product():
             )
             .join(CategoryModel, ProductModel.category_id == CategoryModel.id)
             .join(LocationModel, SellerModel.location_id == LocationModel.id)
-            .add_columns(SellerModel.name, SellerModel.slug, CategoryModel.name)
+            .add_columns(
+                SellerModel.name,
+                SellerModel.slug,
+                CategoryModel.name,
+            )
         )
 
         # Apply search filters
@@ -406,19 +411,28 @@ def show_all_product():
         else:
             products = product_query.all()
 
-        products_list = [
-            {
-                # Gets all column objects on the table and iterates each column name
-                **{
-                    column.name: getattr(product, column.name)
-                    for column in ProductModel.__table__.columns
-                },
-                "seller_name": seller_name,
-                "seller_slug": seller_slug,
-                "category_name": category_name,
-            }
-            for product, seller_name, seller_slug, category_name in products
-        ]
+        # Create a dictionary to store products and their image URLs
+        product_dict = {}
+
+        for product, seller_name, seller_slug, category_name in products:
+            # Retrieve all images for this product
+            images = ProductImageModel.query.filter_by(product_id=product.id).all()
+            image_urls = [image.image_url for image in images]
+
+            if product.id not in product_dict:
+                product_dict[product.id] = {
+                    **{
+                        column.name: getattr(product, column.name)
+                        for column in ProductModel.__table__.columns
+                    },
+                    "seller_name": seller_name,
+                    "seller_slug": seller_slug,
+                    "category_name": category_name,
+                    "image_urls": image_urls,
+                }
+
+        # Convert the dictionary to a list of products
+        products_list = list(product_dict.values())
 
         if page and per_page:
             response = {
@@ -456,15 +470,19 @@ def show_product_by_slug(slug):
             )
             .join(CategoryModel, ProductModel.category_id == CategoryModel.id)
             .join(LocationModel, SellerModel.location_id == LocationModel.id)
+            .outerjoin(
+                ProductImageModel, ProductModel.id == ProductImageModel.product_id
+            )  # Left join, to show all products even tho the product doesn't have image_url
             .add_columns(
                 SellerModel.name,
                 SellerModel.slug,
                 CategoryModel.name,
                 CategoryModel.slug,
                 LocationModel.city,
+                ProductImageModel.image_url,
             )
             .filter(ProductModel.slug == slug)
-            .first()
+            .all()
         )
         if not product_result:
             return ResponseHandler.error(message="Product not found", status=404)
@@ -476,7 +494,13 @@ def show_product_by_slug(slug):
             category_name,
             category_slug,
             location_city,
-        ) = product_result
+            _,
+        ) = product_result[0]
+
+        # Extract all image URLs
+        image_urls = [
+            image_url for _, _, _, _, _, _, image_url in product_result if image_url
+        ]
 
         product_detail = {
             # Gets all column objects on the table and iterates each column name
@@ -489,6 +513,7 @@ def show_product_by_slug(slug):
             "seller_slug": seller_slug,
             "category_slug": category_slug,
             "location_city": location_city,
+            "image_urls": image_urls,  # Return a list of image URLs
         }
 
         # Check if the product is in the current user's cart
