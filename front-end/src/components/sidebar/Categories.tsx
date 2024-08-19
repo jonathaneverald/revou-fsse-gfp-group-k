@@ -21,11 +21,6 @@ const Categories: React.FC = () => {
   `;
 
 	const handleCategoryClick = (cat: string) => {
-		router.push({
-			pathname: "/products",
-			query: { ...query, page: 1, category: cat },
-		});
-
 		const newQuery: Record<string, string> = { ...query, page: "1" };
 
 		if (cat === category) {
