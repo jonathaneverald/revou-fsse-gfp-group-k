@@ -1,16 +1,61 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export function middleware(request: NextRequest) {
-	const token = request.cookies.get("jwtToken")?.value;
-
-	if (!token) {
-		return NextResponse.redirect(new URL("/login", request.url));
+export async function middleware(request: NextRequest) {
+	if (isLoginPage(request)) {
+		return NextResponse.next();
 	}
 
-	return NextResponse.next();
+	const token = request.cookies.get("jwtToken")?.value;
+	if (!token) {
+		return redirectToLogin(request);
+	}
+
+	try {
+		const userData = await validateToken(token);
+		if (!userData) {
+			return redirectToLogin(request);
+		}
+
+		if (isStoreRoute(request) && !isSellerRole(userData.role)) {
+			return new NextResponse("Access denied", { status: 403 });
+		}
+
+		return NextResponse.next();
+	} catch (error) {
+		console.error("Middleware error:", error);
+		return redirectToLogin(request);
+	}
+}
+
+async function validateToken(token: string): Promise<{ role: string } | null> {
+	const response = await fetch("http://127.0.0.1:5000/profile", {
+		headers: { Authorization: `Bearer ${token}` },
+	});
+
+	if (!response.ok) {
+		return null;
+	}
+
+	const data = await response.json();
+	return data.message === "Success" ? data.data : null;
+}
+
+function isLoginPage(request: NextRequest): boolean {
+	return request.nextUrl.pathname === "/login";
+}
+
+function isStoreRoute(request: NextRequest): boolean {
+	return request.nextUrl.pathname.startsWith("/stores/");
+}
+
+function isSellerRole(role: string): boolean {
+	return role === "seller";
+}
+
+function redirectToLogin(request: NextRequest): NextResponse {
+	return NextResponse.redirect(new URL("/login", request.url));
 }
 
 export const config = {
-	matcher: ["/((?!login|register).*)"],
+	matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
