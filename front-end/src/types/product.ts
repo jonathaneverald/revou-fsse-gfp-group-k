@@ -69,6 +69,7 @@ export interface Product {
 	seller_slug: string;
 	location_city: string;
 	status?: string;
+	category_slug?: string;
 }
 
 export interface ProductDetailProps {
