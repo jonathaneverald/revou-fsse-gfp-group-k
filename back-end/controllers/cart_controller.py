@@ -7,6 +7,7 @@ from models.users import UserModel
 from models.sellers import SellerModel
 from models.category import CategoryModel
 from models.voucher import VoucherModel
+from models.product_images import ProductImageModel
 from sqlalchemy.orm import sessionmaker
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from cerberus import Validator
@@ -175,21 +176,36 @@ def show_all_cart():
         if not carts:
             return ResponseHandler.error(message="Cart is still empty!", status=404)
 
-        carts_list = [
-            {
-                "id": cart.id,
-                "product_id": cart.product_id,
-                "user_id": cart.user_id,
-                "seller_name": seller_name,
-                "product_name": product_name,
-                "category_name": category_name,
-                "price": product_price,
-                "quantity": cart.quantity,
-                "description": product_description,
-                "type": product_type,
-            }
-            for cart, seller_name, category_name, product_name, product_price, product_type, product_description in carts
-        ]
+        cart_dict = {}
+
+        for (
+            cart,
+            seller_name,
+            category_name,
+            product_name,
+            product_price,
+            product_type,
+            product_description,
+        ) in carts:
+            images = ProductImageModel.query.filter_by(product_id=cart.product_id).all()
+            image_urls = [image.image_url for image in images]
+
+            if cart.id not in cart_dict:
+                cart_dict[cart.id] = {
+                    "id": cart.id,
+                    "product_id": cart.product_id,
+                    "user_id": cart.user_id,
+                    "seller_name": seller_name,
+                    "product_name": product_name,
+                    "category_name": category_name,
+                    "price": product_price,
+                    "quantity": cart.quantity,
+                    "description": product_description,
+                    "type": product_type,
+                    "image_url": image_urls[0],
+                }
+
+        carts_list = list(cart_dict.values())
 
         return ResponseHandler.success(data=carts_list, status=200)
 
