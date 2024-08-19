@@ -296,6 +296,11 @@ def show_user_transactions():
     user_id = get_jwt_identity()
 
     try:
+        # Retrieve the current user
+        current_user = UserModel.query.filter_by(id=user_id).first()
+        if not current_user:
+            return ResponseHandler.error(message="User not found", status=404)
+
         # Retrieve all transactions for the current user
         transactions = TransactionModel.query.filter_by(user_id=user_id).all()
         if not transactions:
@@ -311,11 +316,14 @@ def show_user_transactions():
                 transaction_id=transaction.id
             ).first()
 
+            voucher_name = None
+            discount = 0
+
             if transaction_voucher:
                 voucher = VoucherModel.query.filter_by(
                     id=transaction_voucher.voucher_id
                 ).first()
-                voucher_name = voucher.name if voucher else None
+                voucher_name = voucher.name
                 discount = transaction_voucher.amount
 
             # Retrieve transaction details
@@ -333,6 +341,14 @@ def show_user_transactions():
                 for detail in transaction_details
             ]
 
+            # Prepare user's information for each product in this transaction
+            user_data = {
+                "user_id": current_user.id,
+                "user_name": current_user.name,
+                "address": current_user.address,
+                "phone_number": current_user.phone_number,
+            }
+
             # Prepare the transaction data
             transactions_data.append(
                 {
@@ -342,6 +358,7 @@ def show_user_transactions():
                     "voucher_applied": voucher_name,
                     "discount": discount,
                     "products": products_data,
+                    "user": user_data,
                 }
             )
 
@@ -385,6 +402,14 @@ def show_seller_transactions():
         # Prepare transaction data
         transactions_data = []
         for transaction in transactions:
+            # Retrieve user information for this transaction
+            user_info = UserModel.query.filter_by(id=transaction.user_id).first()
+            if not user_info:
+                return ResponseHandler.error(
+                    message=f"No user information found for user ID {transaction.user_id}",
+                    status=404,
+                )
+
             # Retrieve the associated voucher if there is any voucher applied in this transaction
             transaction_voucher = TransactionVoucherModel.query.filter_by(
                 transaction_id=transaction.id
@@ -414,6 +439,14 @@ def show_seller_transactions():
                 for detail in transaction_details
             ]
 
+            # Prepare user's information for each product in this transaction
+            user_data = {
+                "user_id": user_info.id,
+                "user_name": user_info.name,
+                "address": user_info.address,
+                "phone_number": user_info.phone_number,
+            }
+
             # Prepare the transaction data
             transactions_data.append(
                 {
@@ -423,6 +456,7 @@ def show_seller_transactions():
                     "voucher_applied": voucher_name,
                     "discount": discount,
                     "products": products_data,
+                    "user": user_data,
                 }
             )
 
