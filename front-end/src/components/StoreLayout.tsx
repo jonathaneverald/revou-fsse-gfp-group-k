@@ -4,9 +4,11 @@ import StoreHeader from "./layouts/StoreHeader";
 import StoreSidebar from "./sidebar/StoreSidebar";
 import StoreForm from "./form/StoreForm";
 import { useAppSelector } from "@/hooks/reduxHooks";
+import useSellerProfile from "@/hooks/useSellerProfile";
 
 const StoreLayout = ({ children }: { children: React.ReactNode }) => {
 	const { data: sellerProfile } = useAppSelector((state) => state.sellerProfile);
+	useSellerProfile();
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 
 	const handleOpenStoreForm = () => setIsOpen(true);

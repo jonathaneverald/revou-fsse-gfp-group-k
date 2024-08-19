@@ -5,12 +5,10 @@ import { Store } from "lucide-react";
 import StoreForm from "../form/StoreForm";
 import { useAppSelector } from "@/hooks/reduxHooks";
 import { Skeleton } from "../ui/skeleton";
-import useSellerProfile from "@/hooks/useSellerProfile";
 
 const StoreNav = () => {
 	const [isOpen, setIsOpen] = useState(false);
 	const { data: user } = useAppSelector((state) => state.user);
-	useSellerProfile();
 	const handleOpenStoreForm = () => setIsOpen(true);
 
 	const SellerButton = () => (
