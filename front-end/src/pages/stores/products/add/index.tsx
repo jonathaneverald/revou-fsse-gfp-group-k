@@ -12,6 +12,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Save } from "lucide-react";
+import useCreateProduct from "@/hooks/useCreateProduct";
 
 const DynamicBreadcrumb = dynamic(
 	() => import("@/components/menu/DynamicBreadcrumb").then((mod) => mod.DynamicBreadcrumb),
@@ -19,38 +20,38 @@ const DynamicBreadcrumb = dynamic(
 );
 
 const FormSchema = z.object({
-	productName: z.string().min(2, { message: "Product Name must be at least 2 characters long." }),
-	description: z.string().min(5, { message: "Description must be at least 5 characters long." }),
-	category: z.string().min(1, { message: "Category is required." }),
-	type: z.string().min(1, { message: "Type is required." }),
-	status: z.string().min(1, { message: "Status is required." }),
-	price: z.coerce.number().positive({ message: "Price must be a positive number." }),
+	category_name: z.string().min(1, { message: "Category is required." }),
+	description: z.string().min(1, { message: "Description is required." }),
+	name: z.string().min(1, { message: "Product Name is required." }),
+	price: z.coerce.number().positive({ message: "Price is required and must be a positive number." }),
 	quantity: z.coerce
 		.number()
 		.int({ message: "Quantity must be an integer." })
-		.positive({ message: "Quantity must be a positive integer." }),
+		.positive({ message: "Quantity is required and must be a positive integer." }),
+	type: z.string().min(1, { message: "Type is required." }),
 });
 
 type FormValues = z.infer<typeof FormSchema>;
 
 const ProductForm = () => {
-	const { categories, isLoading, error } = useFetchCategories();
+	const { categories, isLoading: categoriesLoading, error: categoriesError } = useFetchCategories();
+	const { createProduct, isLoading, error, success } = useCreateProduct();
 
 	const form = useForm<FormValues>({
 		resolver: zodResolver(FormSchema),
 		defaultValues: {
-			productName: "",
+			category_name: "",
 			description: "",
-			category: "",
-			type: "",
-			status: "",
+			name: "",
 			price: 0,
 			quantity: 1,
+			type: "",
 		},
 	});
 
-	const onSubmit = (data: FormValues) => {
-		console.log(data);
+	const onSubmit = async (data: FormValues) => {
+		const res = await createProduct(data);
+		console.log(res);
 	};
 
 	return (
@@ -77,7 +78,7 @@ const ProductForm = () => {
 							<CardContent className="space-y-4">
 								<FormField
 									control={form.control}
-									name="productName"
+									name="name"
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel>Product Name</FormLabel>
@@ -110,7 +111,7 @@ const ProductForm = () => {
 							<CardContent className="grid gap-2 grid-cols-2">
 								<FormField
 									control={form.control}
-									name="category"
+									name="category_name"
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel>Product Category</FormLabel>
@@ -148,8 +149,8 @@ const ProductForm = () => {
 														<SelectValue placeholder="Select type" />
 													</SelectTrigger>
 													<SelectContent>
-														<SelectItem value="standard">Standard</SelectItem>
-														<SelectItem value="premium">Premium</SelectItem>
+														<SelectItem value="Standard">Standard</SelectItem>
+														<SelectItem value="Premium">Premium</SelectItem>
 													</SelectContent>
 												</Select>
 											</FormControl>
@@ -161,7 +162,7 @@ const ProductForm = () => {
 						</Card>
 					</div>
 					<div className="flex flex-col gap-4">
-						<Card>
+						{/* <Card>
 							<CardHeader>
 								<CardTitle className="text-lg">Product Status</CardTitle>
 							</CardHeader>
@@ -189,7 +190,7 @@ const ProductForm = () => {
 									)}
 								/>
 							</CardContent>
-						</Card>
+						</Card> */}
 						<Card>
 							<CardHeader>
 								<CardTitle className="text-lg">Pricing & Inventory</CardTitle>
