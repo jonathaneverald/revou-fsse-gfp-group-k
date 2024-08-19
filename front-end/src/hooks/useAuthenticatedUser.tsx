@@ -19,7 +19,7 @@ const useUserProfile = () => {
 		try {
 			if (!getToken()) {
 				setToken(
-					"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcyMzk5NTk5OSwianRpIjoiYWMzM2Y5ZmItMTM2OS00MGFiLWFhN2UtMjBlODM2ODY5OTc0IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNzIzOTk1OTk5LCJjc3JmIjoiZmRjMDQ2ZDEtM2JkNS00YTA3LTkyM2YtMjdjNjk2M2I3ZDI1IiwiZXhwIjoxNzI0MDgyMzk5fQ.ZRiNLhg3uTd1GTq1MufNUo74Cem_JWwbPy97WO4C50w"
+					"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcyMzk5NjA5MCwianRpIjoiMGI4OWZhOTAtMmM1ZS00MjE5LTk5NDgtNmUyZmYzYjc0ZGU4IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNzIzOTk2MDkwLCJjc3JmIjoiMDU4OWE4NjktNTc2YS00ODc4LTg2ODItNTFjOGY4YzE1YmFmIiwiZXhwIjoxNzI0MDgyNDkwfQ.116uMc_RZtwyH9f3Gii2aJqk5vLVEN5FpoyYt6ARC4o"
 				);
 			}
 
@@ -33,7 +33,7 @@ const useUserProfile = () => {
 
 			if (!response.ok) {
 				removeToken();
-				router.push("/login");
+				console.log(response);
 				return;
 			}
 
@@ -41,13 +41,13 @@ const useUserProfile = () => {
 
 			if (data.msg === "Token has expired") {
 				removeToken();
-				router.push("/login");
+				console.log(data);
 				return;
 			}
 
 			dispatch(setUserData(data.data));
 		} catch (err) {
-			router.push("/login");
+			console.log(err);
 		} finally {
 			dispatch(setLoading(false));
 		}
