@@ -16,8 +16,8 @@ const Categories: React.FC = () => {
 		useFilteredCategories(categories);
 
 	const getCategoryClassName = (cat: string) => `
-    mx-2 p-2 capitalize rounded-md text-sm font-medium hover:bg-gray-100 hover:text-emerald-600 cursor-pointer my-1
-    ${cat.toLowerCase() === category.toLowerCase() ? "bg-gray-100 text-emerald-600" : "text-gray-700"}
+    mx-2 p-2 capitalize rounded-md text-sm font-medium hover:bg-emerald-50 hover:text-emerald-700 cursor-pointer my-1
+    ${cat.toLowerCase() === category.toLowerCase() ? "bg-emerald-50 text-emerald-700" : "text-gray-700"}
   `;
 
 	const handleCategoryClick = (cat: string) => {

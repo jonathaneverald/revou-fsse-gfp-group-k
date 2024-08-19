@@ -16,8 +16,8 @@ const Cities: React.FC = () => {
 		useFilteredCities(cities);
 
 	const getCityClassName = (cat: string) => `
-    mx-2 p-2 capitalize rounded-md text-sm font-medium hover:bg-gray-100 hover:text-emerald-600 cursor-pointer my-1
-    ${cat.toLowerCase() === city.toLowerCase() ? "bg-gray-100 text-emerald-600" : "text-gray-700"}
+    mx-2 p-2 capitalize rounded-md text-sm font-medium hover:bg-emerald-50 hover:text-emerald-700 cursor-pointer my-1
+    ${cat.toLowerCase() === city.toLowerCase() ? "bg-emerald-50 text-emerald-700" : "text-gray-700"}
   `;
 
 	const handleCityClick = (cit: string) => {
