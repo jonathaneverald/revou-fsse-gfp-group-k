@@ -34,9 +34,7 @@ def add_cart():
         data = request.get_json()  # Get input data
         validator = Validator(add_cart_schema)
         if not validator.validate(data):
-            return ResponseHandler.error(
-                message="Data Invalid!", data=validator.errors, status=400
-            )
+            return ResponseHandler.error(message="Data Invalid!", data=validator.errors, status=400)
 
         product = s.query(ProductModel).filter_by(slug=data["product_slug"]).first()
         if not product:
@@ -50,9 +48,7 @@ def add_cart():
         if not category:
             return ResponseHandler.error(message="Category not found", status=404)
 
-        existing_cart_item = (
-            s.query(CartModel).filter_by(user_id=user_id, product_id=product.id).first()
-        )
+        existing_cart_item = s.query(CartModel).filter_by(user_id=user_id, product_id=product.id).first()
         if existing_cart_item:
             return ResponseHandler.error(message="Product already in cart", status=400)
 
@@ -108,9 +104,7 @@ def update_cart(cart_id):
         # Retrieve the cart item and ensure it belongs to the current user
         cart_item = s.query(CartModel).filter_by(id=cart_id, user_id=user_id).first()
         if not cart_item:
-            return ResponseHandler.error(
-                message="Cart item not found or does not belong to the user", status=404
-            )
+            return ResponseHandler.error(message="Cart item not found or does not belong to the user", status=404)
         product = s.query(ProductModel).filter_by(id=cart_item.product_id).first()
         seller = s.query(SellerModel).filter_by(id=product.seller_id).first()
         category = s.query(CategoryModel).filter_by(id=product.category_id).first()
@@ -118,9 +112,7 @@ def update_cart(cart_id):
         data = request.get_json()  # Get input data
         validator = Validator(update_cart_schema)
         if not validator.validate(data):
-            return ResponseHandler.error(
-                message="Data Invalid!", data=validator.errors, status=400
-            )
+            return ResponseHandler.error(message="Data Invalid!", data=validator.errors, status=400)
 
         updated_quantity = data["quantity"]
         cart_item.quantity = updated_quantity
@@ -178,15 +170,7 @@ def show_all_cart():
 
         cart_dict = {}
 
-        for (
-            cart,
-            seller_name,
-            category_name,
-            product_name,
-            product_price,
-            product_type,
-            product_description,
-        ) in carts:
+        for cart, seller_name, category_name, product_name, product_price, product_type, product_description in carts:
             images = ProductImageModel.query.filter_by(product_id=cart.product_id).all()
             image_urls = [image.image_url for image in images]
             image_url = image_urls[0] if image_urls else None
@@ -234,9 +218,7 @@ def delete_cart(cart_id):
         # Retrieve the cart item and ensure it belongs to the current user
         cart_item = s.query(CartModel).filter_by(id=cart_id, user_id=user_id).first()
         if not cart_item:
-            return ResponseHandler.error(
-                message="Cart item not found or does not belong to the user", status=404
-            )
+            return ResponseHandler.error(message="Cart item not found or does not belong to the user", status=404)
 
         s.delete(cart_item)
         s.commit()
@@ -270,9 +252,7 @@ def show_cart_voucher():
 
         # Retrieve the cart items and ensure it belongs to the current user
         cart_items = (
-            VoucherModel.query.join(
-                SellerModel, VoucherModel.seller_id == SellerModel.id
-            )
+            VoucherModel.query.join(SellerModel, VoucherModel.seller_id == SellerModel.id)
             .join(ProductModel, SellerModel.id == ProductModel.seller_id)
             .join(CartModel, ProductModel.id == CartModel.product_id)
             # Return specify columns
@@ -289,9 +269,7 @@ def show_cart_voucher():
         )
 
         if not cart_items:
-            return ResponseHandler.error(
-                message="No vouchers available for products in the cart.", status=404
-            )
+            return ResponseHandler.error(message="No vouchers available for products in the cart.", status=404)
 
         voucher_lists = [
             {

@@ -33,9 +33,7 @@ def register():
         # Check data is valid or invalid
         if not validator.validate(data):
             logging.error("Validation error: %s", validator.errors)
-            return ResponseHandler.error(
-                message="Data Invalid!", data=validator.errors, status=400
-            )
+            return ResponseHandler.error(message="Data Invalid!", data=validator.errors, status=400)
 
         email = data.get("email")
         password = data.get("password")
@@ -49,13 +47,9 @@ def register():
         if existing_email:
             return ResponseHandler.error(message="Email already exists", status=409)
 
-        existing_phone_number = (
-            s.query(UserModel).filter((UserModel.phone_number == phone_number)).first()
-        )
+        existing_phone_number = s.query(UserModel).filter((UserModel.phone_number == phone_number)).first()
         if existing_phone_number:
-            return ResponseHandler.error(
-                message="Phone Number already exists", status=409
-            )
+            return ResponseHandler.error(message="Phone Number already exists", status=409)
 
         # Create new user
         new_user = UserModel(
@@ -98,9 +92,7 @@ def login():
 
         # Check data is valid or invalid
         if not validator.validate(data):
-            return ResponseHandler.error(
-                message="Data Invalid!", data=validator.errors, status=400
-            )
+            return ResponseHandler.error(message="Data Invalid!", data=validator.errors, status=400)
 
         email = data.get("email")
         password = data.get("password")
@@ -171,6 +163,7 @@ def profile():
 
 
 @auth_blueprint.put("/profile")
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def update_profile():
     user_id = get_jwt_identity()
@@ -184,9 +177,7 @@ def update_profile():
 
         # Check data is valid or invalid
         if not validator.validate(data):
-            return ResponseHandler.error(
-                message="Data Invalid!", data=validator.errors, status=400
-            )
+            return ResponseHandler.error(message="Data Invalid!", data=validator.errors, status=400)
 
         user = s.query(UserModel).filter(UserModel.id == user_id).first()
 
@@ -194,30 +185,30 @@ def update_profile():
         if user == None:
             return ResponseHandler.error(message="User not found!", status=403)
 
-        email = data.get("email")
-        password = data.get("password")
-        name = data.get("name")
-        address = data.get("address")
-        phone_number = data.get("phone_number")
+        if "email" in data:
+            # Check if the email already exists
+            existing_email = s.query(UserModel).filter((UserModel.email == user.email)).first()
+            if existing_email:
+                return ResponseHandler.error(message="Email already exists", status=409)
+            else:
+                user.email = data.get("email")
 
-        # Check if the email already exists
-        existing_email = s.query(UserModel).filter((UserModel.email == email)).first()
-        if existing_email:
-            return ResponseHandler.error(message="Email already exists", status=409)
+        if "phone_number" in data:
+            existing_phone_number = s.query(UserModel).filter((UserModel.phone_number == user.phone_number)).first()
+            if existing_phone_number:
+                return ResponseHandler.error(message="Phone Number already exists", status=409)
+            else:
+                user.phone_number = data.get("phone_number")
 
-        existing_phone_number = (
-            s.query(UserModel).filter((UserModel.phone_number == phone_number)).first()
-        )
-        if existing_phone_number:
-            return ResponseHandler.error(
-                message="Phone Number already exists", status=409
-            )
+        if "password" in data:
+            password = data.get("password")
+            user.set_password(password)
 
-        user.email = email
-        user.set_password(password)
-        user.name = name
-        user.address = address
-        user.phone_number = phone_number
+        if "name" in data:
+            user.name = data["name"]
+        if "address" in data:
+            user.address = data["address"]
+
         s.commit()
 
         return ResponseHandler.success(data=user.to_dictionaries(), status=201)
@@ -235,15 +226,14 @@ def update_profile():
 
 
 @auth_blueprint.get("/logout")
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def logout():
     jti = get_jwt()["jti"]  # Get the unique identifier of the token
     revoked_tokens.add(jti)  # Add the token's jti to the revoked tokens set
     user_info = {"id": current_user.id, "email": current_user.email}
     logout_user()
-    return ResponseHandler.success(
-        data={"message": "Logout success!", "user": user_info}, status=200
-    )
+    return ResponseHandler.success(data={"message": "Logout success!", "user": user_info}, status=200)
 
 
 # @auth_blueprint.get("/verify-token")

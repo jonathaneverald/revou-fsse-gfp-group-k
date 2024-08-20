@@ -37,16 +37,12 @@ def add_seller():
         # Check if the user already has a seller account
         existing_seller = s.query(SellerModel).filter_by(user_id=user_id).first()
         if existing_seller:
-            return ResponseHandler.error(
-                message="User already has a seller account", status=400
-            )
+            return ResponseHandler.error(message="User already has a seller account", status=400)
 
         data = request.get_json()  # Get input data
         validator = Validator(add_seller_schema)
         if not validator.validate(data):
-            return ResponseHandler.error(
-                message="Data Invalid!", data=validator.errors, status=400
-            )
+            return ResponseHandler.error(message="Data Invalid!", data=validator.errors, status=400)
 
         # Check if inputted location is exists in database
         location = s.query(LocationModel).filter_by(city=data["city_location"]).first()
@@ -55,9 +51,7 @@ def add_seller():
 
         slug = SellerModel.generate_slug(data["name"])
 
-        new_seller = SellerModel(
-            user_id=user_id, location_id=location.id, slug=slug, name=data["name"]
-        )
+        new_seller = SellerModel(user_id=user_id, location_id=location.id, slug=slug, name=data["name"])
         s.add(new_seller)
         s.commit()
 
@@ -116,13 +110,12 @@ def seller_profile():
             "id": seller.id,
             "user_id": seller.user_id,
             "location_id": location.id,
+            "location_name": location.city,
             "slug": seller.slug,
             "name": seller.name,
         }
 
-        return ResponseHandler.success(
-            message="Seller profile fetched successfully", data=data
-        )
+        return ResponseHandler.success(message="Seller profile fetched successfully", data=data)
 
     except Exception as e:
         return ResponseHandler.error(
@@ -130,7 +123,8 @@ def seller_profile():
             data=str(e),
             status=500,
         )
- 
+
+
 @seller_blueprint.put("/seller-profile/<int:seller_id>")
 @jwt_required()
 def update_seller_profile(seller_id):
@@ -156,15 +150,11 @@ def update_seller_profile(seller_id):
         data = request.get_json()  # Get input data
         validator = Validator(update_seller_schema)
         if not validator.validate(data):
-            return ResponseHandler.error(
-                message="Data Invalid!", data=validator.errors, status=400
-            )
+            return ResponseHandler.error(message="Data Invalid!", data=validator.errors, status=400)
 
         # Update location if provided
         if "city_location" in data:
-            location = (
-                s.query(LocationModel).filter_by(city=data["city_location"]).first()
-            )
+            location = s.query(LocationModel).filter_by(city=data["city_location"]).first()
             if not location:
                 return ResponseHandler.error(message="Location not found", status=404)
             seller.location_id = location.id
@@ -197,9 +187,7 @@ def update_seller_profile(seller_id):
             "city": location.city,
         }
 
-        return ResponseHandler.success(
-            message="Seller profile updated successfully", data=updated_profile_data
-        )
+        return ResponseHandler.success(message="Seller profile updated successfully", data=updated_profile_data)
 
     except Exception as e:
         s.rollback()
@@ -219,9 +207,7 @@ def update_seller_profile(seller_id):
 def show_seller():
     try:
         sellers = (
-            SellerModel.query.join(
-                LocationModel, SellerModel.location_id == LocationModel.id
-            )
+            SellerModel.query.join(LocationModel, SellerModel.location_id == LocationModel.id)
             .add_columns(LocationModel.city)
             .all()
         )
@@ -356,9 +342,7 @@ def show_seller_products():
                 }
             )
 
-        return ResponseHandler.success(
-            message="Seller products fetched successfully", data=product_data
-        )
+        return ResponseHandler.success(message="Seller products fetched successfully", data=product_data)
 
     except Exception as e:
         return ResponseHandler.error(
