@@ -16,11 +16,11 @@ register_schema = {
         "required": True,
     },
     "password": {"type": "string", "minlength": 8, "maxlength": 255, "required": True},
-    "role": {
-        "type": "string",
-        "allowed": ["seller", "customer"],
-        "required": True,
-    },
+    # "role": {
+    #     "type": "string",
+    #     "allowed": ["seller", "customer"],
+    #     "required": True,
+    # },
     "address": {"type": "string", "maxlength": 255, "required": True},
     "phone_number": {"type": "string", "maxlength": 16, "required": True},
 }

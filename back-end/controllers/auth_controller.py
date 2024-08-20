@@ -20,6 +20,7 @@ revoked_tokens = set()
 
 
 @auth_blueprint.post("/register")
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 def register():
     Session = sessionmaker(bind=connection)
     s = Session()
@@ -39,7 +40,7 @@ def register():
         email = data.get("email")
         password = data.get("password")
         name = data.get("name")
-        role = data.get("role")
+        role = "customer"
         address = data.get("address")
         phone_number = data.get("phone_number")
 
@@ -85,6 +86,7 @@ def register():
 
 
 @auth_blueprint.post("/login")
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 def login():
     Session = sessionmaker(connection)
     s = Session()
