@@ -189,6 +189,7 @@ def show_all_cart():
         ) in carts:
             images = ProductImageModel.query.filter_by(product_id=cart.product_id).all()
             image_urls = [image.image_url for image in images]
+            image_url = image_urls[0] if image_urls else None
 
             if cart.id not in cart_dict:
                 cart_dict[cart.id] = {
@@ -202,7 +203,7 @@ def show_all_cart():
                     "quantity": cart.quantity,
                     "description": product_description,
                     "type": product_type,
-                    "image_url": image_urls[0],
+                    "image_url": image_url,
                 }
 
         carts_list = list(cart_dict.values())
