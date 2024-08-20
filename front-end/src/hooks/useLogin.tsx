@@ -1,3 +1,4 @@
+import { LoginResponse } from '@/types/login'
 import { useState } from 'react'
 import { SubmitHandler } from 'react-hook-form'
 
@@ -9,12 +10,10 @@ type LoginFormData = {
 const useLogin = () => {
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
-    const [success, setSuccess] = useState<boolean>(false)
 
     const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
         setLoading(true)
         setError(null)
-        setSuccess(false)
 
         try {
             const response = await fetch('http://127.0.0.1:5000/login', {
@@ -25,14 +24,19 @@ const useLogin = () => {
                 body: JSON.stringify(data),
             })
 
+            const result: LoginResponse = await response.json()
+
             if (!response.ok) {
-                const result = await response.json()
                 throw new Error(result.message || 'Login failed')
             }
 
-            setSuccess(true)
-        } catch (err: any) {
-            setError(err.message)
+            return result
+        } catch (err: unknown) {
+            const errorMessage =
+                err instanceof Error
+                    ? err.message
+                    : 'An unexpected error occurred'
+            setError(errorMessage)
         } finally {
             setLoading(false)
         }
@@ -42,7 +46,6 @@ const useLogin = () => {
         onSubmit,
         loading,
         error,
-        success,
     }
 }
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import {
@@ -22,6 +22,17 @@ import {
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
 
 const FormSchema = z.object({
     name: z.string().min(2, {
@@ -36,6 +47,7 @@ const FormSchema = z.object({
 })
 
 const Register: React.FC = () => {
+    const [isDialogOpen, setDialogOpen] = useState(false)
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
@@ -49,8 +61,9 @@ const Register: React.FC = () => {
 
     const { onSubmit, loading, error, success } = useRegister()
 
-    const handleFormSubmit = (data: z.infer<typeof FormSchema>) => {
-        onSubmit(data)
+    const handleFormSubmit = async (data: z.infer<typeof FormSchema>) => {
+        await onSubmit(data)
+        setDialogOpen(true)
     }
 
     return (
@@ -177,6 +190,34 @@ const Register: React.FC = () => {
                     </div>
                 </CardContent>
             </Card>
+
+            <AlertDialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+                <AlertDialogTrigger asChild>
+                    <Button variant="outline" className="hidden">
+                        Show Dialog
+                    </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>
+                            Registration Successful
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Your account has been created successfully.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel onClick={() => setDialogOpen(false)}>
+                            Close
+                        </AlertDialogCancel>
+                        <AlertDialogAction asChild>
+                            <Link href="/login">
+                                <Button>Go to Login</Button>
+                            </Link>
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     )
 }

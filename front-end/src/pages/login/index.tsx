@@ -21,6 +21,9 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import useLogin from '@/hooks/useLogin'
+import { setToken } from '@/utils/tokenUtils'
+import { useRouter } from 'next/router'
+import { LoginResponse } from '@/types/login'
 
 const FormSchema = z.object({
     email: z.string().email('Invalid email address'),
@@ -28,18 +31,24 @@ const FormSchema = z.object({
 })
 
 const Login: React.FC = () => {
+    const router = useRouter()
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            email: '',
-            password: '',
+            email: 'ilham@mail.com',
+            password: 'ilham123',
         },
     })
 
-    const { onSubmit, loading, error, success } = useLogin()
+    const { onSubmit, loading, error } = useLogin()
 
-    const handleFormSubmit = (data: z.infer<typeof FormSchema>) => {
-        onSubmit(data)
+    const handleFormSubmit = async (data: z.infer<typeof FormSchema>) => {
+        const response = (await onSubmit(data)) as LoginResponse
+
+        if (response) {
+            setToken(response.data.access_token)
+            router.push('/')
+        }
     }
 
     return (
