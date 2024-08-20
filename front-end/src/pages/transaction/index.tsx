@@ -9,13 +9,20 @@ interface Product {
 	quantity: number;
 }
 
+interface User {
+	user_name: string;
+	address: string;
+	phone_number: string;
+}
+
 interface Transaction {
 	id: number;
 	discount: number;
 	products: Product[];
 	status: string;
 	total_price: number;
-	voucher_applied: string;
+	voucher_applied: string | null;
+	user: User;
 }
 
 interface TransactionsResponse {
@@ -59,6 +66,15 @@ const TransactionsPage: React.FC<Props> = ({ transactions, error }) => {
 									Voucher Applied
 								</TableHead>
 								<TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+									User Name
+								</TableHead>
+								<TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+									Address
+								</TableHead>
+								<TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+									Phone Number
+								</TableHead>
+								<TableHead className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
 									Products
 								</TableHead>
 							</TableRow>
@@ -76,10 +92,19 @@ const TransactionsPage: React.FC<Props> = ({ transactions, error }) => {
 										{formatIntToIDR(transaction.total_price)}
 									</TableCell>
 									<TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-										{transaction.discount}
+										{formatIntToIDR(transaction.discount)}
 									</TableCell>
 									<TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-										{transaction.voucher_applied}
+										{transaction.voucher_applied ?? "None"}
+									</TableCell>
+									<TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+										{transaction.user.user_name}
+									</TableCell>
+									<TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+										{transaction.user.address}
+									</TableCell>
+									<TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+										{transaction.user.phone_number}
 									</TableCell>
 									<TableCell className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
 										<ul>
