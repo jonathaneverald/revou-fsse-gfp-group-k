@@ -24,6 +24,7 @@ import useLogin from '@/hooks/useLogin'
 import { setToken } from '@/utils/tokenUtils'
 import { useRouter } from 'next/router'
 import { LoginResponse } from '@/types/login'
+import useUserProfile from '@/hooks/useAuthenticatedUser'
 
 const FormSchema = z.object({
     email: z.string().email('Invalid email address'),
@@ -32,6 +33,8 @@ const FormSchema = z.object({
 
 const Login: React.FC = () => {
     const router = useRouter()
+    const { fetchUserData } = useUserProfile()
+
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
@@ -47,6 +50,7 @@ const Login: React.FC = () => {
 
         if (response) {
             setToken(response.data.access_token)
+            await fetchUserData()
             router.push('/')
         }
     }
