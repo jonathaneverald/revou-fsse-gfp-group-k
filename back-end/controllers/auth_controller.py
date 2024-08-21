@@ -187,14 +187,18 @@ def update_profile():
 
         if "email" in data:
             # Check if the email already exists
-            existing_email = s.query(UserModel).filter((UserModel.email == user.email)).first()
+            new_email = data.get("email")
+            existing_email = s.query(UserModel).filter(UserModel.email == new_email, UserModel.id != user_id).first()
             if existing_email:
                 return ResponseHandler.error(message="Email already exists", status=409)
             else:
-                user.email = data.get("email")
+                user.email = new_email
 
         if "phone_number" in data:
-            existing_phone_number = s.query(UserModel).filter((UserModel.phone_number == user.phone_number)).first()
+            new_phone_number = data.get("phone_number")
+            existing_phone_number = (
+                s.query(UserModel).filter(UserModel.phone_number == new_phone_number, UserModel.id != user_id).first()
+            )
             if existing_phone_number:
                 return ResponseHandler.error(message="Phone Number already exists", status=409)
             else:
@@ -226,14 +230,18 @@ def update_profile():
 
 
 @auth_blueprint.get("/logout")
-@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
+@cross_origin(origins=["http://localhost:3000", "http://127.0.0.1:3000"], supports_credentials=True)
 @jwt_required()
 def logout():
     jti = get_jwt()["jti"]  # Get the unique identifier of the token
     revoked_tokens.add(jti)  # Add the token's jti to the revoked tokens set
-    user_info = {"id": current_user.id, "email": current_user.email}
-    logout_user()
-    return ResponseHandler.success(data={"message": "Logout success!", "user": user_info}, status=200)
+
+    if current_user.is_authenticated:
+        user_info = {"id": current_user.id, "email": current_user.email}
+        logout_user()
+        return ResponseHandler.success(data={"message": "Logout success!", "user": user_info}, status=200)
+    else:
+        return ResponseHandler.success(data={"message": "User already logged out or not logged in."}, status=200)
 
 
 # @auth_blueprint.get("/verify-token")
