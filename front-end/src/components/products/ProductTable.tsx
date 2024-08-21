@@ -29,6 +29,9 @@ import {
     DialogTitle,
 } from '../ui/dialog'
 import ImageUploadDialog from '../form/ImageUploadDialog'
+import { useRouter } from 'next/router'
+import axios from 'axios'
+import { getToken } from '@/utils/tokenUtils'
 
 interface Product {
     id: number
@@ -45,19 +48,36 @@ interface ProductTableProps {
 }
 
 const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
+    const router = useRouter()
     const [openDialog, setOpenDialog] = useState(false)
     const [openDialogImage, setOpenDialogImage] = useState(false)
     const [images, setImages] = useState<string[] | null>([])
     const [selectedProduct, setSelectedProduct] = useState<number | null>(null)
 
-    const handleDelete = (productId: number | null, productName: string) => {
+    const handleDelete = (productId: number | null) => {
         setSelectedProduct(productId)
         setOpenDialog(true)
     }
 
-    const confirmDelete = () => {
-        console.log(`Product deleted: ${selectedProduct}`)
-        setOpenDialog(false)
+    const confirmDelete = async () => {
+        if (selectedProduct !== null) {
+            try {
+                const token = getToken()
+                await axios.delete(
+                    `http://127.0.0.1:5000/product/${selectedProduct}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                )
+            } catch (error) {
+                console.error('Failed to delete product:', error)
+            } finally {
+                setOpenDialog(false)
+                setSelectedProduct(null)
+            }
+        }
     }
 
     const showImage = (
@@ -85,7 +105,7 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
                             <span className="sr-only">Image</span>
                         </TableHead>
                         <TableHead>Name</TableHead>
-                        <TableHead>Type</TableHead>
+                        <TableHead className="hidden md:block">Type</TableHead>
                         <TableHead>Price</TableHead>
                         <TableHead className="hidden lg:table-cell">
                             Quantity
@@ -115,7 +135,7 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
                             <TableCell className="font-medium">
                                 {product.name}
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="hidden md:block">
                                 <Badge variant="outline">{product.type}</Badge>
                             </TableCell>
                             <TableCell>
@@ -143,22 +163,26 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
                                         <DropdownMenuLabel>
                                             Actions
                                         </DropdownMenuLabel>
-                                        <DropdownMenuItem className="flex items-center justify-between">
+                                        <DropdownMenuItem
+                                            onClick={() =>
+                                                router.push(
+                                                    `/stores/products/edit/${product.slug}`
+                                                )
+                                            }
+                                            className="flex items-center justify-between"
+                                        >
                                             Edit
                                             <SquarePen className="size-4" />
                                         </DropdownMenuItem>
-                                        <DropdownMenuItem
+                                        {/* <DropdownMenuItem
                                             className="flex items-center justify-between"
                                             onClick={() =>
-                                                handleDelete(
-                                                    product.id,
-                                                    product.name
-                                                )
+                                                handleDelete(product.id)
                                             }
                                         >
                                             Delete
                                             <Trash className="size-4" />
-                                        </DropdownMenuItem>
+                                        </DropdownMenuItem> */}
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </TableCell>
@@ -177,9 +201,8 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
                     <DialogHeader>
                         <DialogTitle>Confirm Deletion</DialogTitle>
                         <DialogDescription>
-                            Are you sure you want to delete the product{' '}
-                            <strong>{selectedProduct}</strong>? This action
-                            cannot be undone.
+                            Are you sure you want to delete the product ? This
+                            action cannot be undone.
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
