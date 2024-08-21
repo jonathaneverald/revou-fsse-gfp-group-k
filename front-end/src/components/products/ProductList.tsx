@@ -98,11 +98,21 @@ const ProductList = () => {
                         </PaginationItem>
                         {[...Array(total_pages)].map((_, index) => {
                             const page = index + 1
-                            const startPage = Math.max(1, currentPage - 2)
-                            const endPage = Math.min(
-                                total_pages,
-                                currentPage + 2
-                            )
+                            let startPage = Math.max(1, currentPage - 2)
+                            let endPage = Math.min(total_pages, currentPage + 2)
+
+                            if (total_pages > 5) {
+                                if (currentPage <= 3) {
+                                    startPage = 1
+                                    endPage = 5
+                                } else if (currentPage + 2 >= total_pages) {
+                                    startPage = total_pages - 4
+                                    endPage = total_pages
+                                } else {
+                                    startPage = currentPage - 2
+                                    endPage = currentPage + 2
+                                }
+                            }
 
                             if (page >= startPage && page <= endPage) {
                                 return (
