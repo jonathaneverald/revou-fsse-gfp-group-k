@@ -40,9 +40,7 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
     const [productImages, setProductImages] = useState<string[] | null>(images)
 
     useEffect(() => {
-        if (images && images.length > 0) {
-            setProductImages(images)
-        }
+        setProductImages(images)
     }, [images])
 
     const {
@@ -112,9 +110,9 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
                         <Button type="submit">Upload</Button>
                     </form>
 
-                    <Carousel className="w-full">
-                        <CarouselContent>
-                            {productImages && productImages.length > 0 ? (
+                    {productImages && productImages.length > 0 ? (
+                        <Carousel className="w-full">
+                            <CarouselContent>
                                 <>
                                     {productImages.map((image, index) => (
                                         <CarouselItem
@@ -132,13 +130,13 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
                                         </CarouselItem>
                                     ))}
                                 </>
-                            ) : (
-                                <p>No images uploaded yet.</p>
-                            )}
-                        </CarouselContent>
-                        <CarouselPrevious />
-                        <CarouselNext />
-                    </Carousel>
+                            </CarouselContent>
+                            <CarouselPrevious />
+                            <CarouselNext />
+                        </Carousel>
+                    ) : (
+                        <p>No images uploaded yet.</p>
+                    )}
                 </div>
             </DialogContent>
         </Dialog>
