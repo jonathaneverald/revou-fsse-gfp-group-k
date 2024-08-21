@@ -54,12 +54,10 @@ def add_product():
         data = request.get_json()  # Get input data
         validator = Validator(add_product_schema)
         if not validator.validate(data):
-            return ResponseHandler.error(
-                message="Data Invalid!", data=validator.errors, status=400
-            )
+            return ResponseHandler.error(message="Data Invalid!", data=validator.errors, status=400)
 
         # Check if inputted category is exists in database
-        category = s.query(CategoryModel).filter_by(name=data["category_name"]).first()
+        category = s.query(CategoryModel).filter_by(slug=data["category_name"]).first()
         if not category:
             return ResponseHandler.error(message="Category not found", status=404)
 
@@ -96,9 +94,7 @@ def add_product():
 
             return ResponseHandler.success(data=product_dict, status=201)
 
-        return ResponseHandler.error(
-            message="Error retrieving product info", status=500
-        )
+        return ResponseHandler.error(message="Error retrieving product info", status=500)
 
     except Exception as e:
         s.rollback()
@@ -134,9 +130,7 @@ def upload_product_image(product_id):
         if not seller:
             return ResponseHandler.error(message="Seller not found", status=404)
 
-        product = (
-            s.query(ProductModel).filter_by(id=product_id, seller_id=seller.id).first()
-        )
+        product = s.query(ProductModel).filter_by(id=product_id, seller_id=seller.id).first()
         if not product:
             return ResponseHandler.error(
                 message="Product not found or the Product belongs to other seller",
@@ -149,19 +143,13 @@ def upload_product_image(product_id):
         for file in files:
             upload_result = cloudinary.uploader.upload(file)
             image_url = upload_result["secure_url"]
-            product_image = ProductImageModel(
-                product_id=product_id, image_url=image_url
-            )
+            product_image = ProductImageModel(product_id=product_id, image_url=image_url)
             s.add(product_image)
 
         s.commit()
 
-        product_images = (
-            s.query(ProductImageModel).filter_by(product_id=product_id).all()
-        )
-        return ResponseHandler.success(
-            data=[product_image.to_dictionaries() for product_image in product_images]
-        )
+        product_images = s.query(ProductImageModel).filter_by(product_id=product_id).all()
+        return ResponseHandler.success(data=[product_image.to_dictionaries() for product_image in product_images])
 
     except Exception as e:
         s.rollback()
@@ -197,9 +185,7 @@ def update_product(product_id):
         if not seller:
             return ResponseHandler.error(message="Seller not found", status=404)
 
-        product = (
-            s.query(ProductModel).filter_by(id=product_id, seller_id=seller.id).first()
-        )
+        product = s.query(ProductModel).filter_by(id=product_id, seller_id=seller.id).first()
         if not product:
             return ResponseHandler.error(
                 message="Product not found or the Product belongs to other seller",
@@ -209,15 +195,11 @@ def update_product(product_id):
         data = request.get_json()  # Get input data
         validator = Validator(update_product_schema)
         if not validator.validate(data):
-            return ResponseHandler.error(
-                message="Data Invalid!", data=validator.errors, status=400
-            )
+            return ResponseHandler.error(message="Data Invalid!", data=validator.errors, status=400)
 
         # Update location if provided
         if "category_name" in data:
-            category = (
-                s.query(CategoryModel).filter_by(name=data["category_name"]).first()
-            )
+            category = s.query(CategoryModel).filter_by(name=data["category_name"]).first()
             if not category:
                 return ResponseHandler.error(message="Category not found", status=404)
             product.category_id = category.id
@@ -267,9 +249,7 @@ def update_product(product_id):
 
             return ResponseHandler.success(data=product_dict, status=201)
 
-        return ResponseHandler.error(
-            message="Error retrieving product info", status=500
-        )
+        return ResponseHandler.error(message="Error retrieving product info", status=500)
 
     except Exception as e:
         s.rollback()
@@ -305,9 +285,7 @@ def update_product_image(product_id, image_id):
         if not seller:
             return ResponseHandler.error(message="Seller not found", status=404)
 
-        product = (
-            s.query(ProductModel).filter_by(id=product_id, seller_id=seller.id).first()
-        )
+        product = s.query(ProductModel).filter_by(id=product_id, seller_id=seller.id).first()
         if not product:
             return ResponseHandler.error(
                 message="Product not found or the Product belongs to other seller",
@@ -315,11 +293,7 @@ def update_product_image(product_id, image_id):
             )
 
         # Get the product image
-        product_image = (
-            s.query(ProductImageModel)
-            .filter_by(id=image_id, product_id=product_id)
-            .first()
-        )
+        product_image = s.query(ProductImageModel).filter_by(id=image_id, product_id=product_id).first()
         if not product_image:
             return ResponseHandler.error(
                 message="Product image not found or the image belongs to other product",
@@ -375,9 +349,7 @@ def show_all_product():
         category = request.args.get("category", default=None, type=str)
 
         product_query = (
-            ProductModel.query.join(
-                SellerModel, ProductModel.seller_id == SellerModel.id
-            )
+            ProductModel.query.join(SellerModel, ProductModel.seller_id == SellerModel.id)
             .join(CategoryModel, ProductModel.category_id == CategoryModel.id)
             .join(LocationModel, SellerModel.location_id == LocationModel.id)
             .add_columns(
@@ -389,22 +361,14 @@ def show_all_product():
 
         # Apply search filters
         if product_name:
-            product_query = product_query.filter(
-                ProductModel.name.ilike(f"%{product_name}%")
-            )
+            product_query = product_query.filter(ProductModel.name.ilike(f"%{product_name}%"))
         if location:
-            product_query = product_query.filter(
-                LocationModel.slug.ilike(f"%{location}%")
-            )
+            product_query = product_query.filter(LocationModel.slug.ilike(f"%{location}%"))
         if category:
-            product_query = product_query.filter(
-                CategoryModel.slug.ilike(f"%{category}%")
-            )
+            product_query = product_query.filter(CategoryModel.slug.ilike(f"%{category}%"))
 
         if page and per_page:
-            pagination = product_query.paginate(
-                page=page, per_page=per_page, error_out=False
-            )
+            pagination = product_query.paginate(page=page, per_page=per_page, error_out=False)
             products = pagination.items
             total_products = product_query.count()
             total_pages = ceil(total_products / per_page)
@@ -421,10 +385,7 @@ def show_all_product():
 
             if product.id not in product_dict:
                 product_dict[product.id] = {
-                    **{
-                        column.name: getattr(product, column.name)
-                        for column in ProductModel.__table__.columns
-                    },
+                    **{column.name: getattr(product, column.name) for column in ProductModel.__table__.columns},
                     "seller_name": seller_name,
                     "seller_slug": seller_slug,
                     "category_name": category_name,
@@ -465,9 +426,7 @@ def show_product_by_slug(slug):
     user_id = get_jwt_identity()
     try:
         product_result = (
-            ProductModel.query.join(
-                SellerModel, ProductModel.seller_id == SellerModel.id
-            )
+            ProductModel.query.join(SellerModel, ProductModel.seller_id == SellerModel.id)
             .join(CategoryModel, ProductModel.category_id == CategoryModel.id)
             .join(LocationModel, SellerModel.location_id == LocationModel.id)
             .outerjoin(
@@ -498,16 +457,11 @@ def show_product_by_slug(slug):
         ) = product_result[0]
 
         # Extract all image URLs
-        image_urls = [
-            image_url for _, _, _, _, _, _, image_url in product_result if image_url
-        ]
+        image_urls = [image_url for _, _, _, _, _, _, image_url in product_result if image_url]
 
         product_detail = {
             # Gets all column objects on the table and iterates each column name
-            **{
-                column.name: getattr(product, column.name)
-                for column in ProductModel.__table__.columns
-            },
+            **{column.name: getattr(product, column.name) for column in ProductModel.__table__.columns},
             "seller_name": seller_name,
             "category_name": category_name,
             "seller_slug": seller_slug,
@@ -517,9 +471,7 @@ def show_product_by_slug(slug):
         }
 
         # Check if the product is in the current user's cart
-        cart_item = CartModel.query.filter_by(
-            user_id=user_id, product_id=product.id
-        ).first()
+        cart_item = CartModel.query.filter_by(user_id=user_id, product_id=product.id).first()
 
         # If the product is in the cart, add cart details to the response
         if cart_item:
@@ -560,18 +512,14 @@ def delete_product(product_id):
         if not seller:
             return ResponseHandler.error(message="Seller not found", status=404)
 
-        product = (
-            s.query(ProductModel).filter_by(id=product_id, seller_id=seller.id).first()
-        )
+        product = s.query(ProductModel).filter_by(id=product_id, seller_id=seller.id).first()
         if not product:
             return ResponseHandler.error(message="Product not found", status=404)
 
         s.delete(product)
         s.commit()
 
-        return ResponseHandler.success(
-            message="Product deleted successfully", status=200
-        )
+        return ResponseHandler.success(message="Product deleted successfully", status=200)
 
     except Exception as e:
         s.rollback()
