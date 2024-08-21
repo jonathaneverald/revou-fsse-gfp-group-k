@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { getToken, removeToken } from '@/utils/tokenUtils'
+import { useAppDispatch } from './reduxHooks'
+import { resetSellerProfile } from '@/store/sellerProfileSlice'
 
 const useLogout = () => {
     const [loading, setLoading] = useState<boolean>(false)
     const [error, setError] = useState<string | null>(null)
     const router = useRouter()
+    const dispatch = useAppDispatch()
 
     const handleLogout = async () => {
         setLoading(true)
@@ -26,6 +29,8 @@ const useLogout = () => {
             if (!response.ok) {
                 throw new Error(result.message || 'Logout failed')
             }
+
+            dispatch(resetSellerProfile()) // Dispatch the reset action
 
             removeToken() // Remove the token from cookies
 
