@@ -105,9 +105,11 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
                             <span className="sr-only">Image</span>
                         </TableHead>
                         <TableHead>Name</TableHead>
-                        <TableHead className="hidden md:block">Type</TableHead>
+                        <TableHead className="hidden md:table-cell">
+                            Type
+                        </TableHead>
                         <TableHead>Price</TableHead>
-                        <TableHead className="hidden lg:table-cell">
+                        <TableHead className="hidden md:table-cell">
                             Quantity
                         </TableHead>
 

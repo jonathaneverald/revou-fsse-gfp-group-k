@@ -43,6 +43,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '../ui/select'
+import { ScrollArea } from '../ui/scroll-area'
 
 const statusColorMap = new Map<string, string>([
     [
@@ -135,78 +136,86 @@ const TransactionSellerTable: React.FC = () => {
         )
 
     return (
-        <Card className="mb-5 p-0">
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>ID</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Total Price</TableHead>
-                        <TableHead>Products</TableHead>
-                        <TableHead>Customer</TableHead>
-                    </TableRow>
-                </TableHeader>
-
-                <TableBody>
-                    {transactions.map((transaction) => (
-                        <TableRow key={transaction.id}>
-                            <TableCell className="font-medium">
-                                {transaction.id}
-                            </TableCell>
-                            <TableCell>
-                                <TooltipProvider>
-                                    <Tooltip>
-                                        <TooltipTrigger>
-                                            <Badge
-                                                onClick={() =>
-                                                    handleEdit(
-                                                        transaction.id,
-                                                        transaction.status
-                                                    )
-                                                }
-                                                className={`uppercase ${getStatusColor(
-                                                    transaction.status
-                                                )} transition duration-300 ease-in-out`}
-                                            >
-                                                {transaction.status}
-                                            </Badge>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <span>
-                                                {getStatusTooltipText(
-                                                    transaction.status
-                                                )}{' '}
-                                                Click To Edit
-                                            </span>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                            </TableCell>
-                            <TableCell>
-                                {formatIntToIDR(transaction.total_price)}
-                            </TableCell>
-                            <TableCell>
-                                <ul>
-                                    {transaction.products.map(
-                                        (product, index) => (
-                                            <li key={index}>
-                                                {product.product_name} -{' '}
-                                                {product.quantity} pcs @{' '}
-                                                {formatIntToIDR(product.price)}
-                                            </li>
-                                        )
-                                    )}
-                                </ul>
-                            </TableCell>
-                            <TableCell>
-                                <div>{transaction.user.user_name}</div>
-                                <div>{transaction.user.address}</div>
-                                <div>{transaction.user.phone_number}</div>
-                            </TableCell>
+        <Card className="mb-5 mt-2 p-0">
+            <div className="overflow-x-auto">
+                <Table className="min-w-fit">
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>ID</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead className="hidden md:table-cell">
+                                Total Price
+                            </TableHead>
+                            <TableHead className="hidden md:table-cell">
+                                Products
+                            </TableHead>
+                            <TableHead>Customer</TableHead>
                         </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+                    </TableHeader>
+
+                    <TableBody>
+                        {transactions.map((transaction) => (
+                            <TableRow key={transaction.id}>
+                                <TableCell className="font-medium">
+                                    {transaction.id}
+                                </TableCell>
+                                <TableCell>
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger>
+                                                <Badge
+                                                    onClick={() =>
+                                                        handleEdit(
+                                                            transaction.id,
+                                                            transaction.status
+                                                        )
+                                                    }
+                                                    className={`uppercase ${getStatusColor(
+                                                        transaction.status
+                                                    )} transition duration-300 ease-in-out`}
+                                                >
+                                                    {transaction.status}
+                                                </Badge>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <span>
+                                                    {getStatusTooltipText(
+                                                        transaction.status
+                                                    )}{' '}
+                                                    Click To Edit
+                                                </span>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                </TableCell>
+                                <TableCell className="hidden md:table-cell">
+                                    {formatIntToIDR(transaction.total_price)}
+                                </TableCell>
+                                <TableCell className="hidden md:table-cell">
+                                    <ul>
+                                        {transaction.products.map(
+                                            (product, index) => (
+                                                <li key={index}>
+                                                    {product.product_name} -{' '}
+                                                    {product.quantity} pcs @{' '}
+                                                    {formatIntToIDR(
+                                                        product.price
+                                                    )}
+                                                </li>
+                                            )
+                                        )}
+                                    </ul>
+                                </TableCell>
+                                <TableCell>
+                                    <div>{transaction.user.user_name}</div>
+                                    <div>{transaction.user.address}</div>
+                                    <div>{transaction.user.phone_number}</div>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </div>
             <CardFooter>
                 <div className="text-xs text-muted-foreground">
                     Showing <strong>{transactions.length}</strong> transactions.{' '}
