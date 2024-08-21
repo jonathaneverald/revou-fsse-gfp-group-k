@@ -58,7 +58,7 @@ const VoucherTable: React.FC = () => {
                 await axios.put(
                     `http://127.0.0.1:5000/voucher/${voucherToEdit.id}`,
                     {
-                        name: values.name,
+                        name: values.name.toUpperCase(),
                         discount: values.discount,
                     },
                     {
@@ -71,7 +71,7 @@ const VoucherTable: React.FC = () => {
                 await axios.post(
                     `http://127.0.0.1:5000/voucher`,
                     {
-                        name: values.name,
+                        name: values.name.toUpperCase(),
                         discount: values.discount,
                     },
                     {
