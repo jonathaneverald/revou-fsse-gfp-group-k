@@ -156,16 +156,18 @@ const VoucherTable: React.FC = () => {
 
     return (
         <>
-            <Button
-                size="sm"
-                className="mb-2 mt-2 h-9 gap-1 md:mt-0"
-                onClick={openCreateDialog}
-            >
-                <PlusCircle className="h-3.5 w-3.5" />
-                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Add Voucher
-                </span>
-            </Button>
+            <div className="flex justify-end">
+                <Button
+                    size="sm"
+                    className="mb-2 mt-2 h-9 gap-1 md:mt-0"
+                    onClick={openCreateDialog}
+                >
+                    <PlusCircle className="h-3.5 w-3.5" />
+                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                        Add Voucher
+                    </span>
+                </Button>
+            </div>
 
             <Card className="mb-5 p-0">
                 <Table>
