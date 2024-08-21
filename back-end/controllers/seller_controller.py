@@ -30,10 +30,6 @@ def add_seller():
         if not current_user:
             return ResponseHandler.error(message="User not found", status=404)
 
-        # Check if the current user's role is "seller"
-        if current_user.role != "seller":
-            return ResponseHandler.error(message="Unauthorized access", status=403)
-
         # Check if the user already has a seller account
         existing_seller = s.query(SellerModel).filter_by(user_id=user_id).first()
         if existing_seller:
@@ -53,6 +49,7 @@ def add_seller():
 
         new_seller = SellerModel(user_id=user_id, location_id=location.id, slug=slug, name=data["name"])
         s.add(new_seller)
+        current_user.role = "seller"
         s.commit()
 
         data = {
