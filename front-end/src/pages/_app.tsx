@@ -10,7 +10,10 @@ import { useRouter } from 'next/router'
 export default function App({ Component, pageProps }: AppProps) {
     const router = useRouter()
     const excludeLayout =
-        router.pathname === '/login' || router.pathname === '/register'
+        router.pathname === '/login' ||
+        router.pathname === '/register' ||
+        router.pathname === '/404'
+
     return (
         <Provider store={store}>
             {!excludeLayout ? (
