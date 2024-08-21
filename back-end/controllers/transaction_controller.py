@@ -341,6 +341,18 @@ def show_user_transactions():
                 for detail in transaction_details
             ]
 
+            seller = SellerModel.query.get(transaction.seller_id) if transaction.seller_id else None
+            seller_profile = None
+            if seller:
+                seller_user = UserModel.query.get(seller.user_id)
+                seller_profile = {
+                    "user_id": seller_user.id,
+                    "name": seller_user.name,
+                    "email": seller_user.email,
+                    "address": seller_user.address,
+                    "phone_number": seller_user.phone_number
+                }
+
             # Prepare user's information for each product in this transaction
             user_data = {
                 "user_id": current_user.id,
@@ -359,6 +371,12 @@ def show_user_transactions():
                     "discount": discount,
                     "products": products_data,
                     "user": user_data,
+                    "seller": {
+                        "id":seller.id,
+                        "store":seller.name,
+                        "slug":seller.slug,
+                        "profile":seller_profile,
+                    },  
                 }
             )
 
@@ -370,6 +388,7 @@ def show_user_transactions():
             data=str(e),
             status=500,
         )
+
 
 
 # Show all transactions for current seller that logged in
