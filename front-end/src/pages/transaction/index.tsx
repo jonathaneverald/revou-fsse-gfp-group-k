@@ -10,9 +10,10 @@ import {
 } from '@/components/ui/table'
 import { formatIntToIDR } from '@/utils/currency'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 
 interface Product {
-    price: number
+    price: string
     product_name: string
     quantity: number
 }
@@ -23,14 +24,30 @@ interface User {
     phone_number: string
 }
 
+interface SellerProfile {
+    address: string
+    email: string
+    name: string
+    phone_number: string
+    user_id: number
+}
+
+interface Seller {
+    id: number
+    profile: SellerProfile
+    slug: string
+    store: string
+}
+
 interface Transaction {
     id: number
-    discount: number
+    discount: string
     products: Product[]
     status: string
-    total_price: number
+    total_price: string
     voucher_applied: string | null
     user: User
+    seller: Seller
 }
 
 interface TransactionsResponse {
@@ -52,7 +69,6 @@ const TransactionsPage: React.FC<Props> = ({ transactions, error }) => {
     if (error) {
         return <div>Error: {error}</div>
     }
-    console.log(transactions)
 
     return (
         <div className="p-4 md:px-6">
@@ -83,6 +99,10 @@ const TransactionsPage: React.FC<Props> = ({ transactions, error }) => {
                                     Products
                                 </TableHead>
                                 <TableHead className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                    Store
+                                </TableHead>
+
+                                <TableHead className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                                     Actions
                                 </TableHead>
                             </TableRow>
@@ -94,20 +114,23 @@ const TransactionsPage: React.FC<Props> = ({ transactions, error }) => {
                                         {transaction.id}
                                     </TableCell>
                                     <TableCell className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                                        {transaction.status}
+                                        <Badge className="uppercase">
+                                            {transaction.status}
+                                        </Badge>
                                     </TableCell>
                                     <TableCell className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                                         {formatIntToIDR(
-                                            transaction.total_price
+                                            Number(transaction.total_price)
                                         )}
                                     </TableCell>
                                     <TableCell className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                                        {formatIntToIDR(transaction.discount)}
+                                        {formatIntToIDR(
+                                            Number(transaction.discount)
+                                        )}
                                     </TableCell>
                                     <TableCell className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                                         {transaction.voucher_applied ?? 'None'}
                                     </TableCell>
-
                                     <TableCell className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                                         <ul>
                                             {transaction.products.map(
@@ -116,11 +139,30 @@ const TransactionsPage: React.FC<Props> = ({ transactions, error }) => {
                                                         {product.product_name} -{' '}
                                                         {product.quantity} @{' '}
                                                         {formatIntToIDR(
-                                                            product.price
+                                                            Number(
+                                                                product.price
+                                                            )
                                                         )}
                                                     </li>
                                                 )
                                             )}
+                                        </ul>
+                                    </TableCell>
+                                    <TableCell className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                                        <ul>
+                                            <li>{transaction.seller.store}</li>
+                                            <li>
+                                                {
+                                                    transaction.seller.profile
+                                                        .name
+                                                }
+                                            </li>
+                                            <li>
+                                                {
+                                                    transaction.seller.profile
+                                                        .phone_number
+                                                }
+                                            </li>
                                         </ul>
                                     </TableCell>
                                     <TableCell className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
