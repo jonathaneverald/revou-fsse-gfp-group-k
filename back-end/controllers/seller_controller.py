@@ -18,6 +18,7 @@ seller_blueprint = Blueprint("seller_blueprint", __name__)
 
 
 @seller_blueprint.post("/seller")
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def add_seller():
     user_id = get_jwt_identity()
