@@ -1,9 +1,12 @@
 export interface Voucher {
-	type: "fixed" | "percentage";
-	value: number;
-	code: string;
+    discount: number
+    id: number
+    name: string
+    seller_id: number
+    seller_name: string
+    user_id: number
 }
 
 export interface VoucherMap {
-	[key: string]: Voucher;
+    [key: string]: Voucher
 }

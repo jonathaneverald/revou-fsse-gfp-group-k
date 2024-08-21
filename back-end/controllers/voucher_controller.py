@@ -1,4 +1,5 @@
 from flask import Blueprint, request
+from flask_cors import cross_origin
 from connector.mysql_connector import connection
 from models.voucher import VoucherModel
 from models.users import UserModel
@@ -13,6 +14,7 @@ voucher_blueprint = Blueprint("voucher_blueprint", __name__)
 
 
 @voucher_blueprint.post("/voucher")
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def add_voucher():
     user_id = get_jwt_identity()
@@ -80,6 +82,7 @@ def add_voucher():
 
 
 @voucher_blueprint.put("/voucher/<int:voucher_id>")
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def update_voucher(voucher_id):
     user_id = get_jwt_identity()
@@ -151,6 +154,7 @@ def update_voucher(voucher_id):
 
 
 @voucher_blueprint.get("/voucher")
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def show_all_voucher():
     user_id = get_jwt_identity()
@@ -194,6 +198,7 @@ def show_all_voucher():
 
 
 @voucher_blueprint.get("/voucher/<int:voucher_id>")
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def show_voucher_detail(voucher_id):
     user_id = get_jwt_identity()
@@ -240,6 +245,7 @@ def show_voucher_detail(voucher_id):
 
 
 @voucher_blueprint.delete("/voucher/<int:voucher_id>")
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def delete_voucher(voucher_id):
     user_id = get_jwt_identity()
