@@ -37,7 +37,9 @@ const StoreSideItems: React.FC<StoreItemsProps> = ({
                     >
                         {sellerProfile?.name}
                     </span>
-                    <span className="text-xs text-gray-600">Makassar</span>
+                    <span className="text-xs text-gray-600">
+                        {sellerProfile?.location_name}
+                    </span>
                 </div>
             </div>
 
