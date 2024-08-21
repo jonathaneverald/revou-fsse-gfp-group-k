@@ -21,7 +21,7 @@ import {
 } from '../ui/carousel'
 
 interface ImageUploadDialogProps {
-    productId: number
+    productId: number | null
     images: string[] | null
     openDialogImage: boolean
     setOpenDialogImage: React.Dispatch<React.SetStateAction<boolean>>

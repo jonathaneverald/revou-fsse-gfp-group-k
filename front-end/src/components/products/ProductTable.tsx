@@ -48,21 +48,25 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
     const [openDialog, setOpenDialog] = useState(false)
     const [openDialogImage, setOpenDialogImage] = useState(false)
     const [images, setImages] = useState<string[] | null>([])
-    const [productToDelete, setProductToDelete] = useState<string | null>(null)
+    const [selectedProduct, setSelectedProduct] = useState<number | null>(null)
 
-    const handleDelete = (productName: string) => {
-        setProductToDelete(productName)
+    const handleDelete = (productId: number | null, productName: string) => {
+        setSelectedProduct(productId)
         setOpenDialog(true)
     }
 
     const confirmDelete = () => {
-        console.log(`Product deleted: ${productToDelete}`)
+        console.log(`Product deleted: ${selectedProduct}`)
         setOpenDialog(false)
     }
 
-    const showImage = (imagesParams: string[] | null) => {
+    const showImage = (
+        imagesParams: string[] | null,
+        productId: number | null
+    ) => {
         setImages(imagesParams)
         setOpenDialogImage(true)
+        setSelectedProduct(productId)
     }
 
     return (
@@ -70,7 +74,7 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
             <ImageUploadDialog
                 openDialogImage={openDialogImage}
                 setOpenDialogImage={setOpenDialogImage}
-                productId={1}
+                productId={selectedProduct}
                 images={images}
             />
 
@@ -86,9 +90,7 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
                         <TableHead className="hidden lg:table-cell">
                             Quantity
                         </TableHead>
-                        <TableHead className="hidden lg:table-cell">
-                            Created at
-                        </TableHead>
+
                         <TableHead>
                             <span className="sr-only">Actions</span>
                         </TableHead>
@@ -100,7 +102,9 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
                         <TableRow key={product.id}>
                             <TableCell className="hidden sm:table-cell">
                                 <Image
-                                    onClick={() => showImage(product.images)}
+                                    onClick={() =>
+                                        showImage(product.images, product.id)
+                                    }
                                     alt="Product image"
                                     className="aspect-square cursor-pointer rounded-md object-cover hover:opacity-80"
                                     height="64"
@@ -120,9 +124,7 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
                             <TableCell className="hidden lg:table-cell">
                                 {product.quantity}
                             </TableCell>
-                            <TableCell className="hidden lg:table-cell">
-                                2023-07-12 10:42 AM
-                            </TableCell>
+
                             <TableCell>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
@@ -148,7 +150,10 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
                                         <DropdownMenuItem
                                             className="flex items-center justify-between"
                                             onClick={() =>
-                                                handleDelete(product.name)
+                                                handleDelete(
+                                                    product.id,
+                                                    product.name
+                                                )
                                             }
                                         >
                                             Delete
@@ -173,7 +178,7 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
                         <DialogTitle>Confirm Deletion</DialogTitle>
                         <DialogDescription>
                             Are you sure you want to delete the product{' '}
-                            <strong>{productToDelete}</strong>? This action
+                            <strong>{selectedProduct}</strong>? This action
                             cannot be undone.
                         </DialogDescription>
                     </DialogHeader>

@@ -16,7 +16,13 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
-import { Loader, MoreHorizontal, Trash, SquarePen } from 'lucide-react'
+import {
+    Loader,
+    MoreHorizontal,
+    Trash,
+    SquarePen,
+    PlusCircle,
+} from 'lucide-react'
 import { formatIntToIDR } from '@/utils/currency'
 import { useFetchVouchers } from '@/hooks/useFetchVouchers'
 import axios from 'axios'
@@ -150,9 +156,17 @@ const VoucherTable: React.FC = () => {
 
     return (
         <>
-            <Button size={'sm'} className="mb-2" onClick={openCreateDialog}>
-                Create New Voucher
+            <Button
+                size="sm"
+                className="mb-2 mt-2 h-9 gap-1 md:mt-0"
+                onClick={openCreateDialog}
+            >
+                <PlusCircle className="h-3.5 w-3.5" />
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    Add Voucher
+                </span>
             </Button>
+
             <Card className="mb-5 p-0">
                 <Table>
                     <TableHeader>
