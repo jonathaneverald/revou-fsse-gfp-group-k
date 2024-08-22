@@ -16,7 +16,7 @@ import { useRouter } from 'next/router'
 const CartSummary: React.FC<CartSummaryProps> = ({
     calculateStoreSubtotals,
     calculateTotal,
-    vouchers,
+    voucher,
 }) => {
     const { postTransaction } = useTransactionPost()
     const [loading, setLoading] = useState(false)
@@ -25,7 +25,9 @@ const CartSummary: React.FC<CartSummaryProps> = ({
     const handleSubmit = async () => {
         setLoading(true)
         try {
-            const newTransaction = await postTransaction()
+            const vc = voucher ? voucher.voucher_id : null
+
+            const newTransaction = await postTransaction(vc)
             if (newTransaction.message == 'Success') {
                 router.push('/transaction')
             }
@@ -56,10 +58,6 @@ const CartSummary: React.FC<CartSummaryProps> = ({
                             </div>
                             {storeSubtotal.discount > 0 && (
                                 <div className="flex justify-between text-sm text-green-600">
-                                    <span>
-                                        Discount (
-                                        {vouchers[storeSubtotal.store].code}):
-                                    </span>
                                     <span>
                                         -
                                         {formatIntToIDR(storeSubtotal.discount)}

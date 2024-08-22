@@ -37,11 +37,6 @@ const CartItems: React.FC<CartItemsProps> = ({
                                 <div className="mt-2 grid grid-cols-3">
                                     <div className="col-span-3 text-xs font-semibold capitalize text-gray-500">
                                         {item.seller_name}
-                                        {vouchers[item.store] && (
-                                            <span className="ml-2 text-green-500">
-                                                ({vouchers[item.store].code})
-                                            </span>
-                                        )}
                                     </div>
                                     <div className="col-span-3 line-clamp-1 text-xs font-semibold md:col-span-2 md:line-clamp-none md:text-sm">
                                         {item.product_name}

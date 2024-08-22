@@ -15,12 +15,16 @@ interface TransactionResponse {
 const API_ENDPOINT = 'http://127.0.0.1:5000/transaction'
 
 export function useTransactionPost() {
-    const postTransaction = async (): Promise<TransactionResponse> => {
+    const postTransaction = async (
+        voucher_id: number | null
+    ): Promise<TransactionResponse> => {
         try {
             const token = getToken()
             const response = await axios.post(
                 API_ENDPOINT,
-                {},
+                {
+                    voucher_id: voucher_id,
+                },
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,

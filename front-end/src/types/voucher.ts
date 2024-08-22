@@ -6,7 +6,3 @@ export interface Voucher {
     seller_name: string
     user_id: number
 }
-
-export interface VoucherMap {
-    [key: string]: Voucher
-}

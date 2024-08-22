@@ -3,11 +3,11 @@ import axios from 'axios'
 import { getToken } from '@/utils/tokenUtils'
 
 export interface Voucher {
-    id: number
-    code: string
-    description: string
+    voucher_name: string
     discount: string
     seller_id: number
+    seller_name: string
+    voucher_id: number
 }
 
 export const useFetchCartVouchers = () => {
@@ -22,11 +22,15 @@ export const useFetchCartVouchers = () => {
 
             try {
                 const token = getToken()
-                const response = await axios.get('/cart/vouchers/', {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                })
+                const response = await axios.get(
+                    'http://127.0.0.1:5000/cart/vouchers/',
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                )
+                console.log(response)
 
                 setVouchers(response.data.data) // Assuming the API response has a 'data' field
             } catch (err: any) {

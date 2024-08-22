@@ -1,5 +1,5 @@
 import dynamic from 'next/dynamic'
-import React from 'react'
+import React, { useState } from 'react'
 import { useCartItems } from '@/hooks/useCartItems'
 import { useVouchers } from '@/hooks/useVouchers'
 import { useCartCalculations } from '@/hooks/useCartCalculations'
@@ -49,11 +49,11 @@ const dummyVouchers = [
 ]
 
 interface Voucher {
-    id: number
-    code: string
-    description: string
+    voucher_name: string
     discount: string
-    sellerId: number
+    seller_id: number
+    seller_name: string
+    voucher_id: number
 }
 
 interface SellerVouchers {
@@ -61,28 +61,37 @@ interface SellerVouchers {
     vouchers: Voucher[]
 }
 
-const VoucherList = ({ vouchers }: { vouchers: Voucher[] }) => {
+interface VoucherListProps {
+    vouchers: Voucher[]
+    setSelectedVoucher: React.Dispatch<React.SetStateAction<Voucher | null>>
+}
+
+const VoucherList: React.FC<VoucherListProps> = ({
+    vouchers,
+    setSelectedVoucher,
+}) => {
     return (
         <div className="space-y-4 rounded-lg bg-white p-4">
             {vouchers.length > 0 ? (
                 <ul className="space-y-2">
                     {vouchers.map((voucher) => (
                         <li
-                            key={voucher.id}
+                            key={voucher.voucher_id}
                             className="flex items-center rounded-lg border px-2"
                         >
                             <input
                                 type="radio"
                                 name={'voucherID'}
-                                id={`voucher-${voucher.id}`}
-                                value={voucher.id}
+                                id={`voucher-${voucher.voucher_id}`}
+                                value={voucher.voucher_id}
                                 className="mr-2"
+                                onChange={() => setSelectedVoucher(voucher)}
                             />
                             <label
-                                htmlFor={`voucher-${voucher.id}`}
+                                htmlFor={`voucher-${voucher.voucher_id}`}
                                 className="flex-grow cursor-pointer py-2"
                             >
-                                <p className="text-sm font-medium tracking-wide">{`${voucher.sellerId} ${voucher.code}`}</p>
+                                <p className="text-sm font-medium tracking-wide">{`${voucher.seller_name} ${voucher.voucher_name}`}</p>
                                 <p className="text-sm text-green-600">
                                     Discount: {voucher.discount}
                                 </p>
@@ -103,7 +112,7 @@ const Carts: React.FC = () => {
     const { calculateStoreSubtotals, calculateTotal } =
         useCartCalculations(cartItems)
     const { updateQuantity } = useUpdateCartQuantity()
-    console.log(vouchers)
+    const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null)
 
     if (isError) return <div>Error loading cart items</div>
 
@@ -144,12 +153,15 @@ const Carts: React.FC = () => {
                                     calculateStoreSubtotals
                                 }
                                 calculateTotal={calculateTotal}
-                                vouchers={vouchers}
+                                voucher={selectedVoucher}
                             />
                         )
                     )}
                     <div>
-                        <VoucherList vouchers={dummyVouchers} />
+                        <VoucherList
+                            vouchers={vouchers}
+                            setSelectedVoucher={setSelectedVoucher}
+                        />
                     </div>
                 </div>
             </div>
