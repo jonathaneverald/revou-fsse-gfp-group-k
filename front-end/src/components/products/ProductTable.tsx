@@ -33,14 +33,21 @@ import { useRouter } from 'next/router'
 import axios from 'axios'
 import { getToken } from '@/utils/tokenUtils'
 
+interface Images {
+    id: number
+    image_url: string
+    product_id: number
+}
+
 interface Product {
     id: number
-    images: string[] | null
+    image_urls: string[] | null
     name: string
     price: number
     quantity: number
     slug: string
     type: string
+    images: Images[] | null
 }
 
 interface ProductTableProps {
@@ -51,7 +58,7 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
     const router = useRouter()
     const [openDialog, setOpenDialog] = useState(false)
     const [openDialogImage, setOpenDialogImage] = useState(false)
-    const [images, setImages] = useState<string[] | null>([])
+    const [images, setImages] = useState<Images[] | null>([])
     const [selectedProduct, setSelectedProduct] = useState<number | null>(null)
 
     const handleDelete = (productId: number | null) => {
@@ -81,13 +88,14 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
     }
 
     const showImage = (
-        imagesParams: string[] | null,
+        imagesParams: Images[] | null,
         productId: number | null
     ) => {
         setImages(imagesParams)
         setOpenDialogImage(true)
         setSelectedProduct(productId)
     }
+    console.log(products)
 
     return (
         <Card className="mb-5 p-0">
@@ -131,8 +139,8 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
                                     className="aspect-square cursor-pointer rounded-md object-cover hover:opacity-80"
                                     height="64"
                                     src={
-                                        product.images
-                                            ? product.images[0]
+                                        product.image_urls
+                                            ? product.image_urls[0]
                                             : 'https://via.placeholder.com/300x200?text=No+Image'
                                     }
                                     width="64"
@@ -198,8 +206,8 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
             </Table>
             <CardFooter>
                 <div className="text-xs text-muted-foreground">
-                    Showing <strong>1-10</strong> of <strong>32</strong>{' '}
-                    products
+                    Showing
+                    <strong> {products.length}</strong> products
                 </div>
             </CardFooter>
             <Dialog open={openDialog} onOpenChange={setOpenDialog}>

@@ -21,9 +21,15 @@ import {
 } from '../ui/carousel'
 import { Trash } from 'lucide-react'
 
+interface Images {
+    id: number
+    image_url: string
+    product_id: number
+}
+
 interface ImageUploadDialogProps {
     productId: number | null
-    images: string[] | null
+    images: Images[] | null
     openDialogImage: boolean
     setOpenDialogImage: React.Dispatch<React.SetStateAction<boolean>>
 }
@@ -38,7 +44,7 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
     openDialogImage,
     setOpenDialogImage,
 }) => {
-    const [productImages, setProductImages] = useState<string[] | null>(images)
+    const [productImages, setProductImages] = useState<Images[] | null>(images)
 
     useEffect(() => {
         setProductImages(images)
@@ -83,7 +89,7 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
         try {
             const token = getToken()
             // new api delete image
-            await axios.delete(
+            const response = await axios.delete(
                 `http://127.0.0.1:5000/product/${productId}/${imageId}`,
                 {
                     headers: {
@@ -91,10 +97,12 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
                     },
                 }
             )
+            console.log(response.data.data)
 
             setProductImages(
                 (prevImages) =>
-                    prevImages?.filter((img) => img !== imageUrl) || null
+                    prevImages?.filter((img) => img.image_url !== imageUrl) ||
+                    null
             )
             alert('Image deleted successfully!')
         } catch (error) {
@@ -148,7 +156,7 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
                                         <Image
                                             width={600}
                                             height={600}
-                                            src={image}
+                                            src={image.image_url}
                                             alt={`Product Image ${index + 1}`}
                                             className="aspect-square overflow-hidden rounded-xl border border-gray-200 object-contain"
                                         />
@@ -157,8 +165,8 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
                                             className="absolute right-2 top-2 h-8 w-8 rounded-full bg-red-500 p-1 text-white"
                                             onClick={() =>
                                                 handleDeleteImage(
-                                                    image,
-                                                    index + 1
+                                                    image.image_url,
+                                                    image.id
                                                 )
                                             }
                                         >

@@ -2,14 +2,21 @@ import { getToken } from '@/utils/tokenUtils'
 import axios from 'axios'
 import useSWR from 'swr'
 
+interface Images {
+    id: number
+    image_url: string
+    product_id: number
+}
+
 interface Product {
     id: number
-    images: string[] | null
+    image_urls: string[] | null
     name: string
     price: number
     quantity: number
     slug: string
     type: string
+    images: Images[] | null
 }
 
 interface ApiResponse {
@@ -32,7 +39,6 @@ export function useSellerProducts() {
         'http://127.0.0.1:5000/seller/products',
         fetcher
     )
-    console.log(data)
 
     return {
         products: data?.data || [],
