@@ -36,6 +36,7 @@ import { useAppSelector } from '@/hooks/reduxHooks'
 import { useCities } from '@/hooks/useCities'
 import { StoreFormSchema } from '@/schemas/StoreForm'
 import useCreateStore from '@/hooks/useCreateStore'
+import useUpdateStore from '@/hooks/useUpdateStore'
 
 const StoreForm: React.FC<StoreProfileProps> = ({ isOpen, setIsOpen }) => {
     const [open, setOpen] = useState(false)
@@ -44,6 +45,7 @@ const StoreForm: React.FC<StoreProfileProps> = ({ isOpen, setIsOpen }) => {
     )
     const { cities, fetchCities } = useCities()
     const { createStore, isLoading, error, success } = useCreateStore()
+    const { updateStore, isUpdating, errorUpdating } = useUpdateStore()
 
     const form = useForm({
         resolver: zodResolver(StoreFormSchema),
@@ -69,8 +71,25 @@ const StoreForm: React.FC<StoreProfileProps> = ({ isOpen, setIsOpen }) => {
     }, [sellerProfile, form])
 
     const onSubmit = async (values: z.infer<typeof StoreFormSchema>) => {
-        if (sellerProfile) {
+        if (sellerProfile && sellerProfile.id !== undefined) {
             console.log('Updating store:', values)
+            let name = values.name
+            let city_location =
+                cities.find((city) => city.id === values.location_id)?.city ||
+                ''
+            const result = await updateStore(
+                sellerProfile.id,
+                name,
+                city_location
+            )
+            if (result) {
+                // Handle success, e.g., close the dialog or display a message
+                console.log('Store updated successfully')
+                setIsOpen(false) // Close the dialog after success
+            } else {
+                // Handle error, e.g., display an error message
+                console.error(errorUpdating)
+            }
         } else {
             console.log('Creating store:', values)
             const storeData = {

@@ -124,6 +124,7 @@ def seller_profile():
 
 
 @seller_blueprint.put("/seller-profile/<int:seller_id>")
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def update_seller_profile(seller_id):
     user_id = get_jwt_identity()
