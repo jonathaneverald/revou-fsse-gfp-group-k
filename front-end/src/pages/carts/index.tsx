@@ -7,6 +7,7 @@ import CartItems from '@/components/carts/CartItems'
 import CartSummary from '@/components/carts/CartSummary'
 import { useUpdateCartQuantity } from '@/hooks/useUpdateCartQuantity'
 import { Skeleton } from '@/components/ui/skeleton' // Importing Skeleton from ShadCN
+import { useFetchCartVouchers } from '@/hooks/useFetchCartVouchers'
 
 const DynamicBreadcrumb = dynamic(
     () =>
@@ -98,10 +99,11 @@ const VoucherList = ({ vouchers }: { vouchers: Voucher[] }) => {
 
 const Carts: React.FC = () => {
     const { cartItems, isLoading, isError } = useCartItems()
-    const { vouchers } = useVouchers()
+    const { vouchers } = useFetchCartVouchers()
     const { calculateStoreSubtotals, calculateTotal } =
         useCartCalculations(cartItems)
     const { updateQuantity } = useUpdateCartQuantity()
+    console.log(vouchers)
 
     if (isError) return <div>Error loading cart items</div>
 

@@ -45,7 +45,7 @@ const StoreSideItems: React.FC<StoreItemsProps> = ({
 
             <Link
                 href="/stores/orders"
-                className={`my-1 flex cursor-pointer items-center justify-between rounded-md p-2 py-3 text-sm font-medium capitalize ${
+                className={`my-1 flex cursor-pointer items-center justify-between rounded-md p-2 py-2 text-sm font-medium capitalize ${
                     isActive('/stores/orders')
                         ? 'bg-emerald-50 text-emerald-700'
                         : 'text-gray-700 hover:bg-emerald-50 hover:text-emerald-700'
@@ -55,16 +55,10 @@ const StoreSideItems: React.FC<StoreItemsProps> = ({
                     <ShoppingCart className="mr-2 size-[18px]" />
                     Orders
                 </div>
-                <Badge
-                    variant="destructive"
-                    className="flex items-center justify-center text-[10px]"
-                >
-                    9
-                </Badge>
             </Link>
             <Link
                 href="/stores/products"
-                className={`my-1 flex cursor-pointer items-center justify-between rounded-md p-2 py-3 text-sm font-medium capitalize ${
+                className={`my-1 flex cursor-pointer items-center justify-between rounded-md p-2 py-2 text-sm font-medium capitalize ${
                     isActive('/stores/products')
                         ? 'bg-emerald-50 text-emerald-700'
                         : 'text-gray-700 hover:bg-emerald-50 hover:text-emerald-700'
@@ -77,7 +71,7 @@ const StoreSideItems: React.FC<StoreItemsProps> = ({
             </Link>
             <Link
                 href="/stores/vouchers"
-                className={`my-1 flex cursor-pointer items-center justify-between rounded-md p-2 py-3 text-sm font-medium capitalize ${
+                className={`my-1 flex cursor-pointer items-center justify-between rounded-md p-2 py-2 text-sm font-medium capitalize ${
                     isActive('/stores/vouchers')
                         ? 'bg-emerald-50 text-emerald-700'
                         : 'text-gray-700 hover:bg-emerald-50 hover:text-emerald-700'

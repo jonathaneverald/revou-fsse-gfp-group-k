@@ -19,6 +19,7 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from '../ui/carousel'
+import { Trash } from 'lucide-react'
 
 interface ImageUploadDialogProps {
     productId: number | null
@@ -78,6 +79,30 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
         }
     }
 
+    const handleDeleteImage = async (imageUrl: string, imageId: number) => {
+        try {
+            const token = getToken()
+            // new api delete image
+            await axios.delete(
+                `http://127.0.0.1:5000/product/${productId}/${imageId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            )
+
+            setProductImages(
+                (prevImages) =>
+                    prevImages?.filter((img) => img !== imageUrl) || null
+            )
+            alert('Image deleted successfully!')
+        } catch (error) {
+            console.error('Failed to delete image:', error)
+            alert('Failed to delete image.')
+        }
+    }
+
     return (
         <Dialog open={openDialogImage} onOpenChange={setOpenDialogImage}>
             <DialogContent>
@@ -92,7 +117,7 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
                         onSubmit={handleSubmit(onSubmit)}
                         className="mb-2 flex gap-2"
                     >
-                        <div>
+                        <div className="w-2/3">
                             <Input
                                 id="picture"
                                 type="file"
@@ -107,32 +132,43 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
                                 </span>
                             )}
                         </div>
-                        <Button type="submit">Upload</Button>
+                        <Button className="w-1/3" type="submit">
+                            Upload
+                        </Button>
                     </form>
 
                     {productImages && productImages.length > 0 ? (
                         <Carousel className="w-full">
                             <CarouselContent>
-                                <>
-                                    {productImages.map((image, index) => (
-                                        <CarouselItem
-                                            key={index}
-                                            className="w-full"
+                                {productImages.map((image, index) => (
+                                    <CarouselItem
+                                        key={index}
+                                        className="relative w-full"
+                                    >
+                                        <Image
+                                            width={600}
+                                            height={600}
+                                            src={image}
+                                            alt={`Product Image ${index + 1}`}
+                                            className="aspect-square overflow-hidden rounded-xl border border-gray-200 object-contain"
+                                        />
+                                        <Button
+                                            size={'icon'}
+                                            className="absolute right-2 top-2 h-8 w-8 rounded-full bg-red-500 p-1 text-white"
+                                            onClick={() =>
+                                                handleDeleteImage(
+                                                    image,
+                                                    index + 1
+                                                )
+                                            }
                                         >
-                                            <Image
-                                                width={600}
-                                                height={600}
-                                                key={index}
-                                                src={image}
-                                                alt={`Product Image ${index + 1}`}
-                                                className="aspect-square object-contain"
-                                            />
-                                        </CarouselItem>
-                                    ))}
-                                </>
+                                            <Trash className="h-3 w-3" />
+                                        </Button>
+                                    </CarouselItem>
+                                ))}
                             </CarouselContent>
-                            <CarouselPrevious />
-                            <CarouselNext />
+                            <CarouselPrevious className="left-2" />
+                            <CarouselNext className="right-2" />
                         </Carousel>
                     ) : (
                         <p>No images uploaded yet.</p>

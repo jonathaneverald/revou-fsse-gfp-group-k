@@ -531,3 +531,57 @@ def delete_product(product_id):
 
     finally:
         s.close()
+
+@product_blueprint.delete("/product/<int:product_id>/<int:image_id>")
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
+@jwt_required()
+def delete_product_image(product_id, image_id):
+    user_id = get_jwt_identity()
+    Session = sessionmaker(connection)
+    s = Session()
+    s.begin()
+
+    try:
+        current_user = s.query(UserModel).filter_by(id=user_id).first()
+        if not current_user:
+            return ResponseHandler.error(message="User not found", status=404)
+
+        # Check if the current user's role is "seller"
+        if current_user.role != "seller":
+            return ResponseHandler.error(message="Unauthorized access", status=403)
+
+        seller = s.query(SellerModel).filter_by(user_id=current_user.id).first()
+        if not seller:
+            return ResponseHandler.error(message="Seller not found", status=404)
+
+        product = s.query(ProductModel).filter_by(id=product_id, seller_id=seller.id).first()
+        if not product:
+            return ResponseHandler.error(
+                message="Product not found or the Product belongs to other seller",
+                status=404,
+            )
+
+        # Get the product image
+        product_image = s.query(ProductImageModel).filter_by(id=image_id, product_id=product_id).first()
+        if not product_image:
+            return ResponseHandler.error(
+                message="Product image not found or the image belongs to other product",
+                status=404,
+            )
+
+        # Delete the image from Cloudinary
+        public_id = os.path.splitext(os.path.basename(product_image.image_url))[0]
+        cloudinary.uploader.destroy(public_id)
+
+        # Delete the image record from the database
+        s.delete(product_image)
+        s.commit()
+
+        return ResponseHandler.success(message="Product image deleted successfully")
+
+    except Exception as e:
+        s.rollback()
+        return ResponseHandler.error(message=str(e), status=500)
+
+    finally:
+        s.close()
