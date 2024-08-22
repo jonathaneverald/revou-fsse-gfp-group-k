@@ -280,7 +280,7 @@ def show_cart_voucher():
                 "voucher_name": voucher_name,
                 "discount": discount,
             }
-            for voucher_id, seller_id, seller_name, voucher_name, discount in cart_items
+            for voucher_id, voucher_name, discount, seller_id, seller_name, in cart_items
         ]
 
         return ResponseHandler.success(data=voucher_lists, status=200)
