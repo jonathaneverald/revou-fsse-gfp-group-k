@@ -387,9 +387,11 @@ def show_all_product():
                 product_dict[product.id] = {
                     **{column.name: getattr(product, column.name) for column in ProductModel.__table__.columns},
                     "seller_name": seller_name,
+                    "seller_name": seller_name,
                     "seller_slug": seller_slug,
                     "category_name": category_name,
                     "image_urls": image_urls,
+                    "images":[image.to_dictionaries() for image in images]
                 }
 
         # Convert the dictionary to a list of products
@@ -577,7 +579,12 @@ def delete_product_image(product_id, image_id):
         s.delete(product_image)
         s.commit()
 
-        return ResponseHandler.success(message="Product image deleted successfully")
+        product_images = s.query(ProductImageModel).filter_by(product_id=product_id).all()
+        return ResponseHandler.success(
+            message="Product image deleted successfully",
+            status=200,
+            data=[product_image.to_dictionaries() for product_image in product_images]
+        )
 
     except Exception as e:
         s.rollback()

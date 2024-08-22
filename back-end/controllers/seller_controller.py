@@ -326,14 +326,18 @@ def show_seller_products():
             images = ProductImageModel.query.filter_by(product_id=product.id).all()
             image_urls = [image.image_url for image in images]
 
+            images =[image.to_dictionaries() for image in images]
+
             # Set images to null if no images are available
             images_field = image_urls if image_urls else None
+            images = images if images else None
 
             product_data.append(
                 {
                     "id": product.id,
                     "name": product.name,
-                    "images": images_field,
+                    "image_urls": images_field,
+                    "images":images,
                     "price": product.price,
                     "quantity": product.quantity,
                     "type": product.type,
