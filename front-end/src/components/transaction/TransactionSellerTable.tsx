@@ -94,7 +94,8 @@ const TransactionSellerTable: React.FC = () => {
     const handleEdit = (transactionId: number, currentStatus: string) => {
         if (
             currentStatus === 'Payment Success' ||
-            currentStatus === 'Transaction Success'
+            currentStatus === 'Transaction Success' ||
+            currentStatus === 'Cancel'
         ) {
             return
         }
@@ -196,7 +197,9 @@ const TransactionSellerTable: React.FC = () => {
                                                     transaction.status ===
                                                         'Payment Success' ||
                                                     transaction.status ===
-                                                        'Transaction Success'
+                                                        'Transaction Success' ||
+                                                    transaction.status ===
+                                                        'Cancel'
                                                 }
                                             >
                                                 <Badge
@@ -208,7 +211,7 @@ const TransactionSellerTable: React.FC = () => {
                                                     }
                                                     className={`uppercase ${getStatusColor(
                                                         transaction.status
-                                                    )} ${transaction.status === 'Payment Success' || transaction.status === 'Transaction Success' ? 'cursor-not-allowed opacity-50' : 'transition duration-300 ease-in-out'}`}
+                                                    )} ${transaction.status === 'Payment Success' || transaction.status === 'Transaction Success' || transaction.status === 'Cancel' ? 'cursor-not-allowed opacity-50' : 'transition duration-300 ease-in-out'}`}
                                                 >
                                                     {transaction.status}
                                                 </Badge>
