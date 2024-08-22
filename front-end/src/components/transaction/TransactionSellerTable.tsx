@@ -27,6 +27,7 @@ import {
     DialogTitle,
 } from '../ui/dialog'
 import { useTransactionSeller } from '@/hooks/useTransactionSeller'
+import useUpdateTransactionStatus from '@/hooks/useUpdateTransactionStatus'
 import { formatIntToIDR } from '@/utils/currency'
 import {
     Tooltip,
@@ -47,22 +48,21 @@ import { ScrollArea } from '../ui/scroll-area'
 
 const statusColorMap = new Map<string, string>([
     [
-        'completed',
+        'payment success',
+        'bg-blue-300 text-blue-800 hover:bg-blue-400 hover:text-blue-900',
+    ],
+    [
+        'transaction success',
         'bg-green-300 text-green-800 hover:bg-green-400 hover:text-green-900',
     ],
     ['pending', 'bg-yellow-300 text-black hover:bg-yellow-400'],
-    ['canceled', 'bg-red-300 text-red-800 hover:bg-red-400 hover:text-red-900'],
-    [
-        'processing',
-        'bg-blue-300 text-blue-800 hover:bg-blue-400 hover:text-blue-900',
-    ],
+    ['cancel', 'bg-red-300 text-red-800 hover:bg-red-400 hover:text-red-900'],
 ])
 
 const statusTooltipMap = new Map<string, string>([
-    ['completed', 'This transaction is successfully completed.'],
     ['pending', 'This transaction is still pending.'],
     ['canceled', 'This transaction was canceled.'],
-    ['processing', 'This transaction is currently being processed.'],
+    ['paymentSuccess', 'This transaction is success.'],
 ])
 
 const getStatusColor = (status: string): string => {
@@ -86,29 +86,58 @@ const TransactionSellerTable: React.FC = () => {
     )
     const [newStatus, setNewStatus] = useState<string>('')
 
-    const { transactions, message, isLoading, isError } = useTransactionSeller()
+    const { transactions, setTransactions, message, isLoading, isError } =
+        useTransactionSeller()
+    const { updateTransactionStatus, isUpdating, error } =
+        useUpdateTransactionStatus()
 
     const handleEdit = (transactionId: number, currentStatus: string) => {
+        if (
+            currentStatus === 'Payment Success' ||
+            currentStatus === 'Transaction Success'
+        ) {
+            return
+        }
         setTransactionToEdit(transactionId)
         setNewStatus(currentStatus)
         setOpenEditDialog(true)
     }
 
-    const confirmEdit = () => {
-        console.log(
-            `Transaction ${transactionToEdit} status changed to ${newStatus}`
-        )
+    const confirmEdit = async () => {
+        if (transactionToEdit && newStatus) {
+            const result = await updateTransactionStatus(
+                transactionToEdit,
+                newStatus
+            )
+            if (result) {
+                console.log(
+                    `Transaction ${transactionToEdit} status changed to ${newStatus}`
+                )
+                // Update the status of the transaction in the local state
+                const updatedTransactions = transactions.map((transaction) =>
+                    transaction.id === transactionToEdit
+                        ? { ...transaction, status: newStatus }
+                        : transaction
+                )
+
+                // This will re-render the component with the updated status
+                setTransactions(updatedTransactions)
+                setTimeout(() => {
+                    setOpenEditDialog(false)
+                }, 1000)
+            }
+        }
         setOpenEditDialog(false)
     }
 
-    if (isLoading)
+    if (isLoading || isUpdating)
         return (
             <Card className="flex items-center justify-center py-10">
                 <Loader className="h-8 w-8 animate-spin text-primary" />
             </Card>
         )
 
-    if (isError) return <div>Error loading transactions</div>
+    if (isError || error) return <div>Error loading transactions</div>
 
     if (transactions.length === 0)
         return (
@@ -162,7 +191,14 @@ const TransactionSellerTable: React.FC = () => {
                                 <TableCell>
                                     <TooltipProvider>
                                         <Tooltip>
-                                            <TooltipTrigger>
+                                            <TooltipTrigger
+                                                disabled={
+                                                    transaction.status ===
+                                                        'Payment Success' ||
+                                                    transaction.status ===
+                                                        'Transaction Success'
+                                                }
+                                            >
                                                 <Badge
                                                     onClick={() =>
                                                         handleEdit(
@@ -172,17 +208,22 @@ const TransactionSellerTable: React.FC = () => {
                                                     }
                                                     className={`uppercase ${getStatusColor(
                                                         transaction.status
-                                                    )} transition duration-300 ease-in-out`}
+                                                    )} ${transaction.status === 'Payment Success' || transaction.status === 'Transaction Success' ? 'cursor-not-allowed opacity-50' : 'transition duration-300 ease-in-out'}`}
                                                 >
                                                     {transaction.status}
                                                 </Badge>
                                             </TooltipTrigger>
                                             <TooltipContent>
                                                 <span>
-                                                    {getStatusTooltipText(
-                                                        transaction.status
-                                                    )}{' '}
-                                                    Click To Edit
+                                                    {transaction.status ===
+                                                    'Payment Success'
+                                                        ? "The transaction's payment is successful"
+                                                        : transaction.status ===
+                                                            'Transaction Success'
+                                                          ? 'The transaction is successful'
+                                                          : getStatusTooltipText(
+                                                                transaction.status
+                                                            )}
                                                 </span>
                                             </TooltipContent>
                                         </Tooltip>
@@ -232,22 +273,17 @@ const TransactionSellerTable: React.FC = () => {
                             <strong>{transactionToEdit}</strong>.
                         </DialogDescription>
                     </DialogHeader>
-                    <Select>
+                    <Select onValueChange={setNewStatus}>
                         <SelectTrigger className="w-full">
                             <SelectValue placeholder="Select a status" />
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
                                 <SelectLabel>Status</SelectLabel>
-                                <SelectItem value="completed">
-                                    Completed
-                                </SelectItem>
                                 <SelectItem value="pending">Pending</SelectItem>
-                                <SelectItem value="canceled">
-                                    Canceled
-                                </SelectItem>
-                                <SelectItem value="processing">
-                                    Processing
+                                <SelectItem value="Cancel">Canceled</SelectItem>
+                                <SelectItem value="Payment Success">
+                                    Payment Success
                                 </SelectItem>
                             </SelectGroup>
                         </SelectContent>

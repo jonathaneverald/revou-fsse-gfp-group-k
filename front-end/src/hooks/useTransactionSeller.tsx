@@ -1,6 +1,7 @@
 import { getToken } from '@/utils/tokenUtils'
 import axios from 'axios'
 import useSWR from 'swr'
+import { useState, useEffect } from 'react'
 
 interface Product {
     price: number
@@ -39,13 +40,22 @@ const fetcher = async (url: string) => {
 }
 
 export function useTransactionSeller() {
+    const [transactions, setTransactions] = useState<Transaction[]>([])
     const { data, error, isLoading } = useSWR<ApiResponse>(
         'http://127.0.0.1:5000/transaction-seller',
         fetcher
     )
 
+    // Populate transactions state when data is fetched
+    useEffect(() => {
+        if (data) {
+            setTransactions(data.data)
+        }
+    }, [data])
+
     return {
-        transactions: data?.data || [],
+        transactions, // Use the state variable here
+        setTransactions, // Return the setter function as well
         message: data?.message,
         isLoading: isLoading,
         isError: error,

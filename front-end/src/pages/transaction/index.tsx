@@ -11,64 +11,59 @@ import {
 import { formatIntToIDR } from '@/utils/currency'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import useUpdateTransactionStatus from '@/hooks/useUpdateTransactionStatus'
+import { useTransactionCustomer } from '@/hooks/useTransactionCustomer'
+import { mutate } from 'swr'
 
-interface Product {
-    price: string
-    product_name: string
-    quantity: number
+const statusColorMap = new Map<string, string>([
+    [
+        'payment success',
+        'bg-blue-300 text-blue-800 hover:bg-blue-400 hover:text-blue-900',
+    ],
+    [
+        'transaction success',
+        'bg-green-300 text-green-800 hover:bg-green-400 hover:text-green-900',
+    ],
+    ['pending', 'bg-yellow-300 text-black hover:bg-yellow-400'],
+    ['cancel', 'bg-red-300 text-red-800 hover:bg-red-400 hover:text-red-900'],
+])
+
+const getStatusColor = (status: string): string => {
+    return (
+        statusColorMap.get(status.toLowerCase()) ||
+        'bg-gray-300 text-gray-800 hover:bg-gray-400 hover:text-gray-900'
+    )
 }
 
-interface User {
-    user_name: string
-    address: string
-    phone_number: string
-}
+const TransactionsPage: React.FC = () => {
+    const { transactions, message, isLoading, isError } =
+        useTransactionCustomer() // Use the new hook
+    const {
+        updateTransactionStatus,
+        isUpdating,
+        error: updateError,
+    } = useUpdateTransactionStatus()
 
-interface SellerProfile {
-    address: string
-    email: string
-    name: string
-    phone_number: string
-    user_id: number
-}
+    const handleMarkAsComplete = async (transactionId: number) => {
+        const newStatus = 'Transaction Success'
+        const result = await updateTransactionStatus(transactionId, newStatus)
 
-interface Seller {
-    id: number
-    profile: SellerProfile
-    slug: string
-    store: string
-}
-
-interface Transaction {
-    id: number
-    discount: string
-    products: Product[]
-    status: string
-    total_price: string
-    voucher_applied: string | null
-    user: User
-    seller: Seller
-}
-
-interface TransactionsResponse {
-    data: Transaction[]
-    message: string
-}
-
-interface Props {
-    transactions: Transaction[]
-    error?: string
-}
-
-const TransactionsPage: React.FC<Props> = ({ transactions, error }) => {
-    const handleMarkAsComplete = (transactionId: number) => {
-        // Implement the logic to mark the transaction as complete
-        console.log(`Mark transaction ${transactionId} as complete`)
+        if (result) {
+            console.log(`Transaction ${transactionId} marked as complete`)
+            setTimeout(() => {
+                // Re-fetch the data for user transactions to update the UI
+                mutate('http://127.0.0.1:5000/transaction') // Trigger re-fetch
+            }, 2000)
+        } else {
+            console.error(
+                'Failed to mark transaction as complete:',
+                updateError
+            )
+        }
     }
 
-    if (error) {
-        return <div>Error: {error}</div>
-    }
+    if (isLoading || isUpdating) return <div>Loading...</div>
+    if (isError) return <div>Error: {isError.message}</div>
 
     return (
         <div className="p-4 md:px-6">
@@ -80,58 +75,41 @@ const TransactionsPage: React.FC<Props> = ({ transactions, error }) => {
                     <Table className="min-w-full divide-y divide-gray-200">
                         <TableHeader className="bg-gray-50">
                             <TableRow>
-                                <TableHead className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                    ID
-                                </TableHead>
-                                <TableHead className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                    Status
-                                </TableHead>
-                                <TableHead className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                    Total Price
-                                </TableHead>
-                                <TableHead className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                    Discount
-                                </TableHead>
-                                <TableHead className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                    Voucher Applied
-                                </TableHead>
-                                <TableHead className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                    Products
-                                </TableHead>
-                                <TableHead className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                    Store
-                                </TableHead>
-
-                                <TableHead className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                    Actions
-                                </TableHead>
+                                <TableHead>ID</TableHead>
+                                <TableHead>Status</TableHead>
+                                <TableHead>Total Price</TableHead>
+                                <TableHead>Discount</TableHead>
+                                <TableHead>Voucher Applied</TableHead>
+                                <TableHead>Products</TableHead>
+                                <TableHead>Store</TableHead>
+                                <TableHead>Actions</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody className="divide-y divide-gray-200 bg-white">
                             {transactions.map((transaction) => (
                                 <TableRow key={transaction.id}>
-                                    <TableCell className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
-                                        {transaction.id}
-                                    </TableCell>
+                                    <TableCell>{transaction.id}</TableCell>
                                     <TableCell className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                                        <Badge className="uppercase">
+                                        <Badge
+                                            className={`uppercase ${getStatusColor(transaction.status)}`}
+                                        >
                                             {transaction.status}
                                         </Badge>
                                     </TableCell>
-                                    <TableCell className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                                    <TableCell>
                                         {formatIntToIDR(
                                             Number(transaction.total_price)
                                         )}
                                     </TableCell>
-                                    <TableCell className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                                    <TableCell>
                                         {formatIntToIDR(
                                             Number(transaction.discount)
                                         )}
                                     </TableCell>
-                                    <TableCell className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                                    <TableCell>
                                         {transaction.voucher_applied ?? 'None'}
                                     </TableCell>
-                                    <TableCell className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                                    <TableCell>
                                         <ul>
                                             {transaction.products.map(
                                                 (product, index) => (
@@ -148,7 +126,7 @@ const TransactionsPage: React.FC<Props> = ({ transactions, error }) => {
                                             )}
                                         </ul>
                                     </TableCell>
-                                    <TableCell className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                                    <TableCell>
                                         <ul>
                                             <li>{transaction.seller.store}</li>
                                             <li>
@@ -165,14 +143,18 @@ const TransactionsPage: React.FC<Props> = ({ transactions, error }) => {
                                             </li>
                                         </ul>
                                     </TableCell>
-                                    <TableCell className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                                        {transaction.status === 'complete' ? (
+                                    <TableCell>
+                                        {transaction.status !==
+                                        'Payment Success' ? (
                                             <Button
                                                 variant={'outline'}
                                                 size={'sm'}
                                                 disabled
                                             >
-                                                Completed
+                                                {transaction.status ===
+                                                'Transaction Success'
+                                                    ? 'Completed'
+                                                    : 'Mark as Complete'}
                                             </Button>
                                         ) : (
                                             <Button
@@ -196,38 +178,6 @@ const TransactionsPage: React.FC<Props> = ({ transactions, error }) => {
             )}
         </div>
     )
-}
-
-export const getServerSideProps: GetServerSideProps<Props> = async (
-    context
-) => {
-    try {
-        const authToken = context.req.cookies.jwtToken
-
-        const res = await fetch('http://127.0.0.1:5000/transaction', {
-            headers: {
-                Authorization: `Bearer ${authToken}`,
-            },
-        })
-
-        if (!res.ok) {
-            throw new Error('Failed to fetch data')
-        }
-        const data: TransactionsResponse = await res.json()
-
-        return {
-            props: {
-                transactions: data.data,
-            },
-        }
-    } catch (error) {
-        return {
-            props: {
-                transactions: [],
-                error: (error as Error).message,
-            },
-        }
-    }
 }
 
 export default TransactionsPage

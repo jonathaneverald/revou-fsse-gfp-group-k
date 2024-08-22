@@ -130,7 +130,11 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
                                     alt="Product image"
                                     className="aspect-square cursor-pointer rounded-md object-cover hover:opacity-80"
                                     height="64"
-                                    src="https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2"
+                                    src={
+                                        product.images
+                                            ? product.images[0]
+                                            : 'https://via.placeholder.com/300x200?text=No+Image'
+                                    }
                                     width="64"
                                 />
                             </TableCell>
