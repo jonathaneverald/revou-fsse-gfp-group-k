@@ -43,6 +43,7 @@ class ProductModel(db.Model):
             "quantity": self.quantity,
             "description": self.description,
             "type": self.type,
+            "images": [image.to_dictionaries() for image in self.product_images]
         }
 
     @staticmethod

@@ -20,7 +20,12 @@ class CategoryModel(db.Model):
         return f"<Category {self.id}>"
 
     def to_dictionaries(self):
-        return {"id": self.id, "slug": self.slug, "name": self.name}
+        return {
+            "id": self.id,
+            "slug": self.slug,
+            "name": self.name,
+            "products": [product.to_dictionaries() for product in self.products]
+        }
 
     @staticmethod
     def generate_slug(name):
