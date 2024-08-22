@@ -238,6 +238,7 @@ def delete_cart(cart_id):
 
 
 @cart_blueprint.get("/cart/vouchers/")
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def show_cart_voucher():
     user_id = get_jwt_identity()

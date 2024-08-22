@@ -56,9 +56,7 @@ def add_transaction():
         data = request.get_json()
         validator = Validator(add_transaction_schema)
         if not validator.validate(data):
-            return ResponseHandler.error(
-                message="Data Invalid!", data=validator.errors, status=400
-            )
+            return ResponseHandler.error(message="Data Invalid!", data=validator.errors, status=400)
 
         transaction_info = []
 
@@ -166,6 +164,7 @@ def add_transaction():
 
 
 @transaction_blueprint.put("/transaction/<int:transaction_id>")
+@cross_origin(origin="localhost", headers=["Content-Type", "Authorization"])
 @jwt_required()
 def update_transaction(transaction_id):
     user_id = get_jwt_identity()
@@ -192,17 +191,13 @@ def update_transaction(transaction_id):
             for field, error_list in errors.items():
                 for error in error_list:
                     if "unallowed value" in error:
-                        allowed_values = update_transaction_schema[field].get(
-                            "allowed", []
-                        )
+                        allowed_values = update_transaction_schema[field].get("allowed", [])
                         return ResponseHandler.error(
                             message=f"Data Invalid! The '{field}' field can only be one of the following: {', '.join(allowed_values)}",
                             data=validator.errors,
                             status=400,
                         )
-            return ResponseHandler.error(
-                message="Data Invalid!", data=validator.errors, status=400
-            )
+            return ResponseHandler.error(message="Data Invalid!", data=validator.errors, status=400)
 
         new_status = data.get("status")
 
@@ -255,16 +250,10 @@ def update_transaction(transaction_id):
 
             if new_status == "Payment Success":
                 # Decrease the quantity of each product in the transaction
-                transaction_details = (
-                    s.query(TransactionDetailModel)
-                    .filter_by(transaction_id=transaction.id)
-                    .all()
-                )
+                transaction_details = s.query(TransactionDetailModel).filter_by(transaction_id=transaction.id).all()
 
                 for detail in transaction_details:
-                    product = (
-                        s.query(ProductModel).filter_by(id=detail.product_id).first()
-                    )
+                    product = s.query(ProductModel).filter_by(id=detail.product_id).first()
                     if product.quantity < detail.quantity:
                         return ResponseHandler.error(
                             message=f"Not enough stock for product {product.name}",
@@ -273,9 +262,7 @@ def update_transaction(transaction_id):
                     product.quantity -= detail.quantity
 
         s.commit()
-        return ResponseHandler.success(
-            message="Transaction status updated successfully", status=200
-        )
+        return ResponseHandler.success(message="Transaction status updated successfully", status=200)
 
     except Exception as e:
         s.rollback()
@@ -304,32 +291,24 @@ def show_user_transactions():
         # Retrieve all transactions for the current user
         transactions = TransactionModel.query.filter_by(user_id=user_id).all()
         if not transactions:
-            return ResponseHandler.success(
-                data=[], message="No transactions found", status=200
-            )
+            return ResponseHandler.success(data=[], message="No transactions found", status=200)
 
         # Prepare transaction data
         transactions_data = []
         for transaction in transactions:
             # Retrieve the associated voucher if there is any voucher applied in this transaction
-            transaction_voucher = TransactionVoucherModel.query.filter_by(
-                transaction_id=transaction.id
-            ).first()
+            transaction_voucher = TransactionVoucherModel.query.filter_by(transaction_id=transaction.id).first()
 
             voucher_name = None
             discount = 0
 
             if transaction_voucher:
-                voucher = VoucherModel.query.filter_by(
-                    id=transaction_voucher.voucher_id
-                ).first()
+                voucher = VoucherModel.query.filter_by(id=transaction_voucher.voucher_id).first()
                 voucher_name = voucher.name
                 discount = transaction_voucher.amount
 
             # Retrieve transaction details
-            transaction_details = TransactionDetailModel.query.filter_by(
-                transaction_id=transaction.id
-            ).all()
+            transaction_details = TransactionDetailModel.query.filter_by(transaction_id=transaction.id).all()
 
             # Prepare details for each product in this transaction
             products_data = [
@@ -350,7 +329,7 @@ def show_user_transactions():
                     "name": seller_user.name,
                     "email": seller_user.email,
                     "address": seller_user.address,
-                    "phone_number": seller_user.phone_number
+                    "phone_number": seller_user.phone_number,
                 }
 
             # Prepare user's information for each product in this transaction
@@ -372,11 +351,11 @@ def show_user_transactions():
                     "products": products_data,
                     "user": user_data,
                     "seller": {
-                        "id":seller.id,
-                        "store":seller.name,
-                        "slug":seller.slug,
-                        "profile":seller_profile,
-                    },  
+                        "id": seller.id,
+                        "store": seller.name,
+                        "slug": seller.slug,
+                        "profile": seller_profile,
+                    },
                 }
             )
 
@@ -388,7 +367,6 @@ def show_user_transactions():
             data=str(e),
             status=500,
         )
-
 
 
 # Show all transactions for current seller that logged in
@@ -407,16 +385,12 @@ def show_seller_transactions():
         # Get the seller ID from the SellerModel
         seller = SellerModel.query.filter_by(user_id=user_id).first()
         if not seller:
-            return ResponseHandler.error(
-                message="Seller information not found", status=404
-            )
+            return ResponseHandler.error(message="Seller information not found", status=404)
 
         # Retrieve all transactions where the current user is the seller
         transactions = TransactionModel.query.filter_by(seller_id=seller.id).all()
         if not transactions:
-            return ResponseHandler.success(
-                data=[], message="No transactions found", status=200
-            )
+            return ResponseHandler.success(data=[], message="No transactions found", status=200)
 
         # Prepare transaction data
         transactions_data = []
@@ -430,23 +404,17 @@ def show_seller_transactions():
                 )
 
             # Retrieve the associated voucher if there is any voucher applied in this transaction
-            transaction_voucher = TransactionVoucherModel.query.filter_by(
-                transaction_id=transaction.id
-            ).first()
+            transaction_voucher = TransactionVoucherModel.query.filter_by(transaction_id=transaction.id).first()
 
             voucher_name = None
             discount = None
             if transaction_voucher:
-                voucher = VoucherModel.query.filter_by(
-                    id=transaction_voucher.voucher_id
-                ).first()
+                voucher = VoucherModel.query.filter_by(id=transaction_voucher.voucher_id).first()
                 voucher_name = voucher.name if voucher else None
                 discount = transaction_voucher.amount
 
             # Retrieve transaction details
-            transaction_details = TransactionDetailModel.query.filter_by(
-                transaction_id=transaction.id
-            ).all()
+            transaction_details = TransactionDetailModel.query.filter_by(transaction_id=transaction.id).all()
 
             # Prepare details for each product in this transaction
             products_data = [
