@@ -32,9 +32,12 @@ In many communities, local producers and artisans face challenges in connecting 
 ## Clone the Repository
 
     - git clone https://github.com/jonathaneverald/revou-fsse-gfp-group-k.git
-    - cd revou-fsse-gfp-group-k/front-end
 
 ### Front-end instalations
+
+#### Change Directory to Front End Folder
+
+    - cd revou-fsse-gfp-group-k/front-end
 
 #### Install dependencies:
 
@@ -45,6 +48,10 @@ In many communities, local producers and artisans face challenges in connecting 
         - npm run dev
 
 ### Back-end instalations
+
+#### Change Directory to Back End Folder
+
+    - cd revou-fsse-gfp-group-k/back-end
 
 #### Install dependencies:
 
