@@ -72,7 +72,7 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
                     },
                 }
             )
-            console.log(response.data.data)
+
             const imageUrls = response.data.data
                 .map((item: { image_url: string }) => item.image_url)
                 .reverse()
@@ -97,7 +97,6 @@ const ImageUploadDialog: React.FC<ImageUploadDialogProps> = ({
                     },
                 }
             )
-            console.log(response.data.data)
 
             setProductImages(
                 (prevImages) =>

@@ -30,7 +30,6 @@ export const useFetchCartVouchers = () => {
                         },
                     }
                 )
-                console.log(response)
 
                 setVouchers(response.data.data) // Assuming the API response has a 'data' field
             } catch (err: any) {

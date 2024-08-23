@@ -22,7 +22,6 @@ const useUpdateTransactionStatus = () => {
         try {
             const token = getToken()
             const payload = { status: newStatus }
-            console.log('Payload:', payload)
 
             const response = await axios.put(
                 `http://127.0.0.1:5000/transaction/${transactionId}`,

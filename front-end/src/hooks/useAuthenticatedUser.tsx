@@ -27,7 +27,6 @@ const useUserProfile = () => {
 
             if (!response.ok) {
                 removeToken()
-                console.log(response)
                 return
             }
 
@@ -35,13 +34,12 @@ const useUserProfile = () => {
 
             if (data.msg === 'Token has expired') {
                 removeToken()
-                console.log(data)
                 return
             }
 
             dispatch(setUserData(data.data))
         } catch (err) {
-            console.log(err)
+            console.error(err)
         } finally {
             dispatch(setLoading(false))
         }

@@ -49,7 +49,6 @@ const TransactionsPage: React.FC = () => {
         const result = await updateTransactionStatus(transactionId, newStatus)
 
         if (result) {
-            console.log(`Transaction ${transactionId} marked as complete`)
             setTimeout(() => {
                 // Re-fetch the data for user transactions to update the UI
                 mutate('http://127.0.0.1:5000/transaction') // Trigger re-fetch

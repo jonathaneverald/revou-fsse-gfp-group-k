@@ -111,9 +111,6 @@ const TransactionSellerTable: React.FC = () => {
                 newStatus
             )
             if (result) {
-                console.log(
-                    `Transaction ${transactionToEdit} status changed to ${newStatus}`
-                )
                 // Update the status of the transaction in the local state
                 const updatedTransactions = transactions.map((transaction) =>
                     transaction.id === transactionToEdit

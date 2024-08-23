@@ -11,8 +11,6 @@ const CartItems: React.FC<CartItemsProps> = ({
     vouchers,
     updateQuantity,
 }) => {
-    console.log(cartItems)
-
     return (
         <>
             {!cartItems ? (

@@ -95,7 +95,6 @@ const ProductTable: React.FC<ProductTableProps> = ({ products }) => {
         setOpenDialogImage(true)
         setSelectedProduct(productId)
     }
-    console.log(products)
 
     return (
         <Card className="mb-5 p-0">

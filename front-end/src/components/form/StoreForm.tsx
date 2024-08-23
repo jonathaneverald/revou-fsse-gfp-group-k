@@ -72,7 +72,6 @@ const StoreForm: React.FC<StoreProfileProps> = ({ isOpen, setIsOpen }) => {
 
     const onSubmit = async (values: z.infer<typeof StoreFormSchema>) => {
         if (sellerProfile && sellerProfile.id !== undefined) {
-            console.log('Updating store:', values)
             let name = values.name
             let city_location =
                 cities.find((city) => city.id === values.location_id)?.city ||
@@ -84,14 +83,13 @@ const StoreForm: React.FC<StoreProfileProps> = ({ isOpen, setIsOpen }) => {
             )
             if (result) {
                 // Handle success, e.g., close the dialog or display a message
-                console.log('Store updated successfully')
+
                 setIsOpen(false) // Close the dialog after success
             } else {
                 // Handle error, e.g., display an error message
                 console.error(errorUpdating)
             }
         } else {
-            console.log('Creating store:', values)
             const storeData = {
                 name: values.name,
                 city_location:
@@ -101,7 +99,7 @@ const StoreForm: React.FC<StoreProfileProps> = ({ isOpen, setIsOpen }) => {
             const result = await createStore(storeData)
             if (result) {
                 // Handle success, e.g., close the dialog or display a message
-                console.log('Store created successfully')
+
                 setIsOpen(false) // Close the dialog after success
             } else {
                 // Handle error, e.g., display an error message
