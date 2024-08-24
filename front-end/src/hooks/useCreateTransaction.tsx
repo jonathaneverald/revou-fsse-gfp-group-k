@@ -20,17 +20,18 @@ export function useTransactionPost() {
     ): Promise<TransactionResponse> => {
         try {
             const token = getToken()
-            const response = await axios.post(
-                API_ENDPOINT,
-                {
-                    voucher_id: voucher_id,
+
+            const payload: { voucher_id?: number } = {}
+
+            if (voucher_id !== null) {
+                payload.voucher_id = voucher_id
+            }
+
+            const response = await axios.post(API_ENDPOINT, payload, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
                 },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            )
+            })
 
             return response.data
         } catch (error) {
