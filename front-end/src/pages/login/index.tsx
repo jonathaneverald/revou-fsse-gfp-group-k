@@ -38,8 +38,8 @@ const Login: React.FC = () => {
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            email: 'ilham@mail.com',
-            password: 'ilham123',
+            email: '',
+            password: '',
         },
     })
 
